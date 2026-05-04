@@ -25,9 +25,12 @@
 #include "../peripheral/DebounceTimer.h"
 // #include "../peripheral/ButtonTrig.h"
 // #include "../peripheral/ButtonMode.h"
-// // #include "../peripheral/ButtonFac.h"
+// #include "../peripheral/ButtonFac.h"
 
-class ThreadApp :
+#undef CLASSNAME
+#define CLASSNAME ThreadApp
+
+class CLASSNAME :
 #if defined ARDUPROF_FREERTOS
     public ardufreertos::ThreadBase
 #elif defined ARDUPROF_MBED
@@ -35,19 +38,19 @@ class ThreadApp :
 #endif
 {
 public:
-    ThreadApp();
+    CLASSNAME();
 
-    static ThreadApp *getInstance(void);
+    static CLASSNAME *getInstance(void);
 
     virtual void start(void *);
     virtual void onMessage(const Message &msg);
 
 protected:
-    typedef void (ThreadApp::*handlerFunc)(const Message &);
+    typedef void (CLASSNAME::*handlerFunc)(const Message &);
     std::map<int16_t, handlerFunc> _handlerMap;
 
 private:
-    static ThreadApp *_instance;
+    static CLASSNAME *_instance;
     LedGreen _ledGreen;
     // ButtonTrig _buttonTrig;
     // ButtonMode _buttonMode;

@@ -17,19 +17,17 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-#include "hardware/rtc.h"
-
 #include "./ThreadApp.h"
 #include "../AppContext.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////
-ThreadApp *ThreadApp::_instance = nullptr;
+CLASSNAME *CLASSNAME::_instance = nullptr;
 
-ThreadApp *ThreadApp::getInstance(void)
+CLASSNAME *CLASSNAME::getInstance(void)
 {
     if (!_instance)
     {
-        static ThreadApp instance;
+        static CLASSNAME instance;
         _instance = &instance;
     }
     return _instance;
@@ -44,7 +42,8 @@ static constexpr UBaseType_t uxCoreAffinityMask = ((1 << 0)); // task only run o
 // static constexpr UBaseType_t uxCoreAffinityMask = ((1 << 1)); // task only run on core 1
 // static constexpr uxCoreAffinityMask = ( ( 1 << 0 ) | ( 1 << 2 ) );  // e.g. task can only run on core 0 and core 2
 
-#define TASK_NAME "ThreadApp"
+#define TASK_NAME STR(CLASSNAME)
+// #define TASK_NAME "ThreadApp"
 #define TASK_STACK_SIZE (4096 / sizeof(StackType_t))
 #define TASK_PRIORITY 6    // Priority, (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
 #define TASK_QUEUE_SIZE 16 // message queue size for app task
@@ -62,7 +61,7 @@ static StackType_t xStack[TASK_STACK_SIZE];
 static StaticTask_t xTaskBuffer;
 
 ///////////////////////////////////////////////////////////////////////
-ThreadApp::ThreadApp() : ThreadBase(TASK_QUEUE_SIZE, ucQueueStorageArea, &xStaticQueue),
+CLASSNAME::CLASSNAME() : ThreadBase(TASK_QUEUE_SIZE, ucQueueStorageArea, &xStaticQueue),
                          _ledGreen(),
                          //  _buttonTrig(queue()),
                          //  _buttonMode(queue()),
@@ -86,14 +85,14 @@ ThreadApp::ThreadApp() : ThreadBase(TASK_QUEUE_SIZE, ucQueueStorageArea, &xStati
     _instance = this;
 
     _handlerMap = {
-        __EVENT_MAP(ThreadApp, EventApp),
-        __EVENT_MAP(ThreadApp, EventSystem),
-        __EVENT_MAP(ThreadApp, EventGpioISR),
-        __EVENT_MAP(ThreadApp, EventNull), // {EventNull, &ThreadApp::handlerEventNull},
+        __EVENT_MAP(CLASSNAME, EventApp),
+        __EVENT_MAP(CLASSNAME, EventSystem),
+        __EVENT_MAP(CLASSNAME, EventGpioISR),
+        __EVENT_MAP(CLASSNAME, EventNull), // {EventNull, &CLASSNAME::handlerEventNull},
     };
 }
 
-void ThreadApp::start(void *ctx)
+void CLASSNAME::start(void *ctx)
 {
     LOG_TRACE("core", get_core_num());
     configASSERT(ctx);
@@ -121,7 +120,7 @@ void ThreadApp::start(void *ctx)
 // #define RUNNING_CORE 1 // dedicate core 1 for Thread
 #define RUNNING_CORE ARDUINO_RUNNING_CORE
 
-#define TASK_NAME "ThreadApp"
+#define TASK_NAME STR(CLASSNAME)
 #define TASK_STACK_SIZE (4096 / sizeof(StackType_t))
 #define TASK_PRIORITY 6   // Priority, (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
 #define TASK_QUEUE_SIZE 8 // message queue size for app task
@@ -139,18 +138,18 @@ static StackType_t xStack[TASK_STACK_SIZE];
 static StaticTask_t xTaskBuffer;
 
 ////////////////////////////////////////////////////////////////////////////////////////////
-ThreadApp::ThreadApp() : ardufreertos::ThreadBase(TASK_QUEUE_SIZE, ucQueueStorageArea, &xStaticQueue),
+CLASSNAME::CLASSNAME() : ardufreertos::ThreadBase(TASK_QUEUE_SIZE, ucQueueStorageArea, &xStaticQueue),
                          _handlerMap()
 {
     _instance = this;
 
     // setup event handlers
     _handlerMap = {
-        __EVENT_MAP(ThreadApp, EventNull), // {EventNull, &ThreadApp::handlerEventNull},
+        __EVENT_MAP(CLASSNAME, EventNull), // {EventNull, &CLASSNAME::handlerEventNull},
     };
 }
 
-void ThreadApp::start(void *ctx)
+void CLASSNAME::start(void *ctx)
 {
     // LOG_TRACE("on core ", xPortGetCoreID(), ", xPortGetFreeHeapSize()=", xPortGetFreeHeapSize());
     ThreadBase::start(ctx);
@@ -176,7 +175,7 @@ void ThreadApp::start(void *ctx)
 /////////////////////////////////////////////////////////////////////////////
 // use static threadQueue instead of heap
 static events::EventQueue threadQueue(THREAD_QUEUE_SIZE);
-ThreadApp::ThreadApp() : ardumbedos::ThreadBase(&threadQueue),
+CLASSNAME::CLASSNAME() : ardumbedos::ThreadBase(&threadQueue),
                          _handlerMap(),
                          _ledGreen(),
                          _state({0})
@@ -187,12 +186,12 @@ ThreadApp::ThreadApp() : ardumbedos::ThreadBase(&threadQueue),
 /////////////////////////////////////////////////////////////////////////////
 {
     _handlerMap = {
-        __EVENT_MAP(ThreadApp, EventApp),
-        __EVENT_MAP(ThreadApp, EventNull), // {EventNull, &ThreadApp::handlerEventNull},
+        __EVENT_MAP(CLASSNAME, EventApp),
+        __EVENT_MAP(CLASSNAME, EventNull), // {EventNull, &CLASSNAME::handlerEventNull},
     };
 }
 
-void ThreadApp::start(void *ctx)
+void CLASSNAME::start(void *ctx)
 {
     LOG_TRACE("core", get_core_num(), ", ctx=(hex)", DebugLogBase::HEX, (uint32_t)ctx);
     ThreadBase::start(ctx);
@@ -200,7 +199,7 @@ void ThreadApp::start(void *ctx)
 
 #endif
 
-void ThreadApp::setup(void)
+void CLASSNAME::setup(void)
 {
 #if defined ARDUPROF_FREERTOS && defined ARDUINO_ARCH_RP2040
     LOG_TRACE("core", get_core_num(), ", uxTaskPriorityGet(NULL)=", uxTaskPriorityGet(NULL));
@@ -224,7 +223,7 @@ void ThreadApp::setup(void)
 }
 
 /////////////////////////////////////////////////////////////////////////////
-void ThreadApp::onMessage(const Message &msg)
+void CLASSNAME::onMessage(const Message &msg)
 {
     // LOG_TRACE("event=", msg.event, ", iParam=", msg.iParam, ", uParam=", msg.uParam, ", lParam=", msg.lParam);
     auto func = _handlerMap[msg.event];
@@ -239,7 +238,7 @@ void ThreadApp::onMessage(const Message &msg)
 }
 
 /////////////////////////////////////////////////////////////////////////////
-__EVENT_FUNC_DEFINITION(ThreadApp, EventApp, msg) // void ThreadApp::handlerEventApp(const Message &msg)
+__EVENT_FUNC_DEFINITION(CLASSNAME, EventApp, msg) // void CLASSNAME::handlerEventApp(const Message &msg)
 {
     auto src = static_cast<AppTriggerSource>(msg.iParam);
     switch (src)
@@ -251,7 +250,7 @@ __EVENT_FUNC_DEFINITION(ThreadApp, EventApp, msg) // void ThreadApp::handlerEven
     }
 }
 
-__EVENT_FUNC_DEFINITION(ThreadApp, EventGpioISR, msg) // void ThreadApp::handlerEventGpioISR(const Message &msg)
+__EVENT_FUNC_DEFINITION(CLASSNAME, EventGpioISR, msg) // void CLASSNAME::handlerEventGpioISR(const Message &msg)
 {
     LOG_TRACE("EventGpioISR(", msg.event, "), iParam = ", msg.iParam, ", uParam = ", msg.uParam, ", lParam = ", msg.lParam);
 
@@ -281,7 +280,7 @@ __EVENT_FUNC_DEFINITION(ThreadApp, EventGpioISR, msg) // void ThreadApp::handler
     //     }
 }
 
-__EVENT_FUNC_DEFINITION(ThreadApp, EventSystem, msg) // void ThreadApp::handlerEventSystem(const Message &msg)
+__EVENT_FUNC_DEFINITION(CLASSNAME, EventSystem, msg) // void CLASSNAME::handlerEventSystem(const Message &msg)
 {
     // LOG_TRACE("EventSystem(", msg.event, "), iParam = ", msg.iParam, ", uParam = ", msg.uParam, ", lParam = ", msg.lParam);
     enum SystemTriggerSource src = static_cast<SystemTriggerSource>(msg.iParam);
@@ -312,12 +311,12 @@ __EVENT_FUNC_DEFINITION(ThreadApp, EventSystem, msg) // void ThreadApp::handlerE
 }
 
 // define EventNull handler
-__EVENT_FUNC_DEFINITION(ThreadApp, EventNull, msg) // void ThreadApp::handlerEventNull(const Message &msg)
+__EVENT_FUNC_DEFINITION(CLASSNAME, EventNull, msg) // void CLASSNAME::handlerEventNull(const Message &msg)
 {
     LOG_TRACE("EventNull(", msg.event, "), iParam=", msg.iParam, ", uParam=", msg.uParam, ", lParam=", msg.lParam);
 }
 /////////////////////////////////////////////////////////////////////////////
-void ThreadApp::handlerSoftwareTimer(TimerHandle_t xTimer)
+void CLASSNAME::handlerSoftwareTimer(TimerHandle_t xTimer)
 {
     if (xTimer == _debounceTimer.timer())
     {
@@ -349,7 +348,7 @@ void ThreadApp::handlerSoftwareTimer(TimerHandle_t xTimer)
     }
 }
 
-// void ThreadApp::handlerButtonClick(const Message &msg)
+// void CLASSNAME::handlerButtonClick(const Message &msg)
 // {
 //     int16_t pin = msg.uParam;
 //     // LOG_TRACE("pin =", pin);
@@ -377,7 +376,7 @@ void ThreadApp::handlerSoftwareTimer(TimerHandle_t xTimer)
 //         LOG_TRACE("SysButtonClick: unsupported pin=", pin);
 //     }
 // }
-// void ThreadApp::handlerButtonDoubleClick(const Message &msg)
+// void CLASSNAME::handlerButtonDoubleClick(const Message &msg)
 // {
 //     int16_t pin = msg.uParam;
 //     // if (pin == _buttonBoot.getPin())
@@ -401,7 +400,7 @@ void ThreadApp::handlerSoftwareTimer(TimerHandle_t xTimer)
 //         LOG_TRACE("SysButtonDoubleClick: unsupported pin=", pin);
 //     }
 // }
-// void ThreadApp::handlerButtonLongPress(const Message &msg)
+// void CLASSNAME::handlerButtonLongPress(const Message &msg)
 // {
 //     int16_t pin = msg.uParam;
 //     // if (pin == _buttonBoot.getPin())
