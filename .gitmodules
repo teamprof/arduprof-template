@@ -1,0 +1,3 @@
+[submodule "nrf/lib/arduprof"]
+	path = nrf/lib/arduprof
+	url = https://github.com/teamprof/arduprof
