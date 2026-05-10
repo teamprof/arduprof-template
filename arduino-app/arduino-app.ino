@@ -18,10 +18,26 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 /*
-For Pi Pico/Pico2 (RP2040/RP2350) with FreeRTOS SMP, please use the following settings in Arduino IDE:
-- On Arduino IDE, click menu "Tools" -> "Board: " -> "Board Manager..." -> "Raspberry Pi Pico" or "Raspberry Pi Pico 2"
+For ESP32/ESP32C3/ESP32S3, please use the following settings in Arduino IDE:
+- On Arduino IDE, click menu "Tools" -> "Board: " -> "Board Manager..." -> 
+    "RAKwirelss RAK3112" or
+    "ESP32S3 Dev Module" or
+    "XIAO_ESP32C3" or
+    "ESP32C3 Dev Module" or
+    "DOIT ESP32 DEVKIT V1" or
+    "ESP32 Dev Module"
+- On Arduino IDE, click menu "Tools" -> "USB CDC On Boot:" -> "Enable"
+
+For Pi Pico (RP2040) Mbed, please use the following settings in Arduino IDE:
+- On Arduino IDE, click menu "Tools" -> "Board: " -> "Board Manager..." -> "Raspberry Pi Pico - Arduino Mbed OS RP2040 Boards"
 - On Arduino IDE, click menu "Tools" -> "Debug Port" -> "Serial"
 - On Arduino IDE, click menu "Tools" -> "CPU Speed" -> "133 MHz"
+- On Arduino IDE, click menu "Tools" -> "Operation System" -> "Mbed OS"
+
+For Pi Pico2 (RP2350) with FreeRTOS SMP, please use the following settings in Arduino IDE:
+- On Arduino IDE, click menu "Tools" -> "Board: " -> "Board Manager..." -> "Raspberry Pi Pico - Raspberry Pi Pico/RP2040/RP2350" or "Raspberry Pi Pico 2"
+- On Arduino IDE, click menu "Tools" -> "Debug Port" -> "Serial"
+- On Arduino IDE, click menu "Tools" -> "CPU Speed" -> "133 MHz" or "150 MHz" for Pi Pico2
 - On Arduino IDE, click menu "Tools" -> "Operation System" -> "FreeRTOS SMP"
 */
 #include <Arduino.h>
@@ -51,7 +67,7 @@ static void startTasks(void)
 
 // set debug port to USB/CDC if USB/CDC is found without INIT_DEBUG_PORT_TIMEOUT
 // otherwise, set debug port to Serial0 (UART0)
-#define INIT_DEBUG_PORT_TIMEOUT 1000 // in unit of ms
+#define INIT_DEBUG_PORT_TIMEOUT 3000 // in unit of ms
 static void initDebugPort(void)
 {
     int timeout = 0;

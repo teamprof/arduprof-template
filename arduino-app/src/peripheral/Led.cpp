@@ -26,9 +26,17 @@
 
 Led *Led::instance = nullptr;
 
+#if defined ARDUINO_ARCH_RP2040 || defined ARDUINO_ARCH_MBED_RP2040
 Led::Led(uint8_t pin,
          uint8_t valueOn,
          PinMode mode) : valueOn(valueOn), Gpio(pin, mode) //, timer()
+#elif defined ESP_PLATFORM
+Led::Led(gpio_num_t pin,
+         uint32_t valueOn,
+         gpio_mode_t mode) : valueOn(valueOn), Gpio(pin, mode) //, timer()
+#endif
+
+
 {
     if (instance == nullptr)
     {

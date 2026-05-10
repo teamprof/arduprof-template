@@ -24,6 +24,8 @@
 #include "./DebounceDef.h"
 #include "./DebounceTimer.h"
 
+#if 0
+// #if defined ARDUINO_ARCH_RP2040 
 class DebounceTimer;
 
 class DebounceButton : public ardufreertos::MessageQueue
@@ -237,3 +239,4 @@ private:
     const uint8_t _PIN;
     QueueHandle_t _queue;
 };
+#endif

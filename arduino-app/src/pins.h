@@ -19,13 +19,19 @@
  */
 #pragma once
 
-#define PI_PICO // for Pi Pico/Pico2
+#ifdef ARDUINO
+#include "Arduino.h"
+#endif
+
+// #ifndef LED_BUILTIN
+// #if defined ARDUINO_ESP32_DEV
+// #define LED_BUILTIN 2 // for ESP32, the on-board LED is connected to GPIO2
+// #pragma message "LED_BUILTIN is not defined, define it as 2 for ESP32"
+// // #elif defined ARDUINO_XIAO_ESP32C3
+// // #define LED_BUILTIN 10 // for XIAO ESP32C3, the on-board LED is connected to GPIO10
+// // #pragma message "LED_BUILTIN is not defined, define it as 10 for XIAO ESP32C3"
+// #endif
+// #endif
 
 ///////////////////////////////////////////////////////////////////////////////
-// PI_PICO
-#ifdef PI_PICO
-// #include "Arduino.h"
-
-// #define PIN_LED 25 // PICO_DEFAULT_LED_PIN: on-board LED (Green) note: already defined in pins_arduino.h, so no need to define it again here
-
-#endif // PI_PICO
+// define application specific pins here, such as LED pin, button pin, etc.

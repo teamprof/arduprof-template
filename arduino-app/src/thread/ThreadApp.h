@@ -21,8 +21,8 @@
 #include <map>
 #include "../ArduProfApp.h"
 #include "../AppEvent.h"
-#include "../peripheral/LedGreen.h"
-#include "../peripheral/DebounceTimer.h"
+#include "../peripheral/LedBuildin.h"
+// #include "../peripheral/DebounceTimer.h"
 // #include "../peripheral/ButtonTrig.h"
 // #include "../peripheral/ButtonMode.h"
 // #include "../peripheral/ButtonFac.h"
@@ -30,11 +30,11 @@
 #undef CLASSNAME
 #define CLASSNAME ThreadApp
 
-class CLASSNAME :
+class CLASSNAME : public
 #if defined ARDUPROF_FREERTOS
-    public ardufreertos::ThreadBase
+                  ardufreertos::ThreadBase
 #elif defined ARDUPROF_MBED
-    public ardumbedos::ThreadBase
+                  ardumbedos::ThreadBase
 #endif
 {
 public:
@@ -51,13 +51,20 @@ protected:
 
 private:
     static CLASSNAME *_instance;
-    LedGreen _ledGreen;
+
+#if defined ARDUPROF_FREERTOS
+    ardufreertos::PeriodicTimer _timer1Hz;
+#elif defined ARDUPROF_MBED
+    ardumbedos::PeriodicTimer _timer1Hz;
+#endif
+
+#if defined LED_BUILTIN
+    LedBuildin _ledBuildin;
+#endif
     // ButtonTrig _buttonTrig;
     // ButtonMode _buttonMode;
     // ButtonFac _buttonFac;
-    DebounceTimer _debounceTimer;  
-
-    ardufreertos::PeriodicTimer _timer1Hz;
+    // DebounceTimer _debounceTimer;
 
     virtual void setup(void);
     void handlerSoftwareTimer(TimerHandle_t xTimer);

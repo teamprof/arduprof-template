@@ -18,44 +18,33 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 #pragma once
-#include <map>
+#include "../pins.h"
 
-#include "../ArduProfApp.h"
-#include "../AppEvent.h"
+#if defined LED_BUILTIN
+#include "./Led.h"
 
-class QueueMain final : public
-#if defined ARDUPROF_FREERTOS
-                        ardufreertos::MessageBus
-#elif defined ARDUPROF_MBED
-                        ardumbedos::MessageBus
+#ifdef GPIO_LED
+#undef GPIO_LED
 #endif
+
+#ifdef ARDUINO_ARCH_ESP32
+#define GPIO_LED (gpio_num_t)(LED_BUILTIN)
+#else
+#define GPIO_LED (LED_BUILTIN)
+#endif
+
+class LedBuildin : public Led
 {
 public:
-    QueueMain();
+    LedBuildin() : Led(GPIO_LED, HIGH)
+    {
+    }
 
-    virtual void start(void *);
-    virtual void onMessage(const Message &msg) override;
-
-    static void printChipInfo(void);
-
-protected:
-    typedef void (QueueMain::*funcPtr)(const Message &);
-    std::map<int16_t, funcPtr> _handlerMap;
-
-private:
-    static QueueMain *_instance;
-
-#if defined ARDUPROF_FREERTOS
-    ardufreertos::PeriodicTimer _timer1Hz;
-#elif defined ARDUPROF_MBED
-    ardumbedos::PeriodicTimer _timer1Hz;
-#endif
-
-    void handlerSoftwareTimer(TimerHandle_t xTimer);
-
-    ///////////////////////////////////////////////////////////////////////
-    // declare event handler
-    ///////////////////////////////////////////////////////////////////////
-    __EVENT_FUNC_DECLARATION(EventSystem)
-    __EVENT_FUNC_DECLARATION(EventNull) // void handlerEventNull(const Message &msg);
+    ~LedBuildin()
+    {
+    }
 };
+
+#undef GPIO_LED
+
+#endif

@@ -23,7 +23,11 @@
 class Led : public Gpio
 {
 public:
+#if defined ARDUINO_ARCH_RP2040 || defined ARDUINO_ARCH_MBED_RP2040
     Led(uint8_t pin, uint8_t valueOn = LOW, PinMode mode = OUTPUT);
+#elif defined ESP_PLATFORM
+    Led(gpio_num_t pin, uint32_t valueOn = LOW, gpio_mode_t mode = GPIO_MODE_OUTPUT);
+#endif
 
     virtual void on(void);
     virtual void off(void);

@@ -23,6 +23,18 @@
 #undef ARDUPROF_ZEPHYR
 #undef ARDUPROF_MBED
 
+
+#if ARDUINO_ARCH_MBED_RP2040
+#define ARDUPROF_MBED
+#elif !defined ARDUPROF_FREERTOS
+#if ARDUINO_RASPBERRY_PI_PICO_2 || ARDUINO_RASPBERRY_PI_PICO || CONFIG_IDF_TARGET_ESP32 || CONFIG_IDF_TARGET_ESP32S3 ||                    \
+    CONFIG_IDF_TARGET_ESP32C3
+// #if ARDUINO_RASPBERRY_PI_PICO_2 || ARDUINO_RASPBERRY_PI_PICO || ARDUINO_ESP32_DEV
+#define ARDUPROF_FREERTOS
+#endif
+#endif
+
+
 // // For ESP32/ESP32C3/ESP32S3
 // // note: USB CDC On Boot: :Enabled"
 // #define ARDUPROF_FREERTOS
@@ -31,9 +43,12 @@
 // For Pi Pico/Pico2/W55RP20-EVB-Pico board (FreeRTOS)
 // note: Operation System: "FreeRTOS SMP"
 //       USB Stack: "Pico SDK"
-#define ARDUPROF_FREERTOS
-#include <ArduProf.h>
+// #define ARDUPROF_FREERTOS
+// #include <ArduProf.h>
 
 // // For Pi Pico Mbed
 // #define ARDUPROF_MBED
 // #include <ArduProf.h>
+
+
+#include <ArduProf.h>

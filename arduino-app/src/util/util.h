@@ -18,25 +18,32 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 #pragma once
-#include "./Led.h"
-#include "../pins.h"
+#include "hardware/structs/sio.h"
 
-#ifdef GPIO_LED
-#undef GPIO_LED
-#endif
-
-#define GPIO_LED PIN_LED
-
-class LedGreen : public Led
+__attribute__((weak)) inline uint32_t get_core_num(void)
 {
-public:
-    LedGreen() : Led(GPIO_LED, HIGH)
-    {
-    }
+    uint32_t core_id = sio_hw->cpuid; // 0 or 1
+    return core_id;
+}
 
-    ~LedGreen()
+inline uint32_t float_to_uint32(float value)
+{
+    union
     {
-    }
-};
+        float f;
+        uint32_t u;
+    } ret;
+    ret.f = value;
+    return ret.u;
+}
 
-#undef GPIO_LED
+inline float uint32_to_float(uint32_t value)
+{
+    union
+    {
+        float f;
+        uint32_t u;
+    } ret;
+    ret.u = value;
+    return ret.f;
+}

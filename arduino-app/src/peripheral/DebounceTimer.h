@@ -23,6 +23,9 @@
 
 #define ButtonListSize 10
 
+#if 0
+// #if defined ARDUINO_RASPBERRY_PI_PICO || ARDUINO_RASPBERRY_PI_PICO_2 
+// #if defined ARDUINO_ARCH_RP2040 
 class DebounceButton;
 
 class DebounceTimer : public ardufreertos::SoftwareTimer, ardufreertos::MessageQueue
@@ -71,3 +74,4 @@ private:
     int _eventValue;
     int _paramValue;
 };
+#endif

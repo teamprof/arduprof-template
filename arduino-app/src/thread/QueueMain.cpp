@@ -28,9 +28,9 @@ QueueMain *QueueMain::_instance = nullptr;
 
 #if defined ARDUPROF_FREERTOS
 ////////////////////////////////////////////////////////////////////////////////////////////
-// QueueMain for W55RP20 FreeRTOS
+// QueueMain for Pi Pico/Pico2 (RP2040/RP2350) FreeRTOS
 ////////////////////////////////////////////////////////////////////////////////////////////
-#define TASK_QUEUE_SIZE 32 // message queue size for app task
+#define TASK_QUEUE_SIZE 16 // message queue size for app task
 static uint8_t ucQueueStorageArea[TASK_QUEUE_SIZE * sizeof(Message)];
 static StaticQueue_t xStaticQueue;
 
@@ -52,33 +52,9 @@ void QueueMain::printChipInfo(void)
     PRINTLN("===============================================================================");
 }
 
-QueueMain::QueueMain() : ardufreertos::MessageBus(TASK_QUEUE_SIZE, ucQueueStorageArea, &xStaticQueue),
-                         _timer1Hz("Timer 1Hz",
-                                   pdMS_TO_TICKS(1000),
-                                   [](TimerHandle_t xTimer)
-                                   {
-                                       if (_instance)
-                                       {
-                                           auto context = reinterpret_cast<AppContext *>(_instance->context());
-                                           if (context && context->queueMain)
-                                           {
-                                               static_cast<QueueMain *>(context->queueMain)->postEvent(EventSystem, SysSoftwareTimer, 0, (uint32_t)xTimer);
-                                           }
-                                       }
-                                   }),
-                         _handlerMap()
-{
-    _instance = this;
-
-    _handlerMap = {
-        __EVENT_MAP(QueueMain, EventSystem),
-        __EVENT_MAP(QueueMain, EventNull), // {EventNull, &QueueMain::handlerEventNull},
-    };
-}
-
 #elif defined ARDUPROF_MBED
 ////////////////////////////////////////////////////////////////////////////////////////////
-// Thread for RP2040
+// Thread for Pi Pico (RP2040) Mbed OS
 ////////////////////////////////////////////////////////////////////////////////////////////
 #define THREAD_QUEUE_SIZE (128 * EVENTS_EVENT_SIZE) // message queue size for app thread
 
@@ -93,20 +69,48 @@ void QueueMain::printChipInfo(void)
 /////////////////////////////////////////////////////////////////////////////
 // use static threadQueue instead of heap
 static events::EventQueue threadQueue(THREAD_QUEUE_SIZE);
-QueueMain::QueueMain() : MessageBus(&threadQueue),
+
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+QueueMain::QueueMain() :
+#if defined ARDUPROF_FREERTOS
+                         ardufreertos::MessageBus(TASK_QUEUE_SIZE, ucQueueStorageArea, &xStaticQueue),
+                         _timer1Hz("Timer 1Hz",
+                                   pdMS_TO_TICKS(1000),
+                                   [](TimerHandle_t xTimer)
+                                   {
+                                       if (_instance)
+                                       {
+                                           auto context = reinterpret_cast<AppContext *>(_instance->context());
+                                           if (context && context->queueMain)
+                                           {
+                                               static_cast<QueueMain *>(context->queueMain)->postEvent(EventSystem, SysSoftwareTimer, 0, (uint32_t)xTimer);
+                                           }
+                                       }
+                                   }),
+#elif defined ARDUPROF_MBED
+                         ardumbedos::MessageBus(&threadQueue),
+                         _timer1Hz(queue(), 1000ms, [](int id)
+                                   {
+                                     if (_instance)
+                                     {
+                                         auto context = reinterpret_cast<AppContext *>(_instance->context());
+                                         if (context && context->queueMain)
+                                         {
+                                             static_cast<QueueMain *>(context->queueMain)->postEvent(EventSystem, SysSoftwareTimer, 0, id);
+                                         }
+                                     } }),
+#endif
                          _handlerMap()
-/////////////////////////////////////////////////////////////////////////////
-// threadQueue is dynamically allocate from heap
-// QueueMain::QueueMain() : MessageQueue(THREAD_QUEUE_SIZE),
-//                          _handlerMap()
-/////////////////////////////////////////////////////////////////////////////
 {
-    // setup event handlers
+    _instance = this;
+
     _handlerMap = {
+        __EVENT_MAP(QueueMain, EventSystem),
         __EVENT_MAP(QueueMain, EventNull), // {EventNull, &QueueMain::handlerEventNull},
     };
 }
-#endif
 
 void QueueMain::start(void *ctx)
 {
@@ -121,7 +125,7 @@ void QueueMain::start(void *ctx)
     MessageBus::start(ctx);
 
     printChipInfo();
-    LOG_DEBUG("uxTaskPriorityGet(NULL)=", uxTaskPriorityGet(NULL));
+    // LOG_DEBUG("uxTaskPriorityGet(NULL)=", uxTaskPriorityGet(NULL));
 
     _timer1Hz.start();
     // _timer1Hz.stop();

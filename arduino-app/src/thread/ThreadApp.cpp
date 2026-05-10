@@ -35,7 +35,7 @@ CLASSNAME *CLASSNAME::getInstance(void)
 
 #if defined ARDUPROF_FREERTOS && defined ARDUINO_ARCH_RP2040
 ////////////////////////////////////////////////////////////////////////////////////////////
-// Thread for FreeRTOS RP2040/RP2350
+// QueueMain for Pi Pico/Pico2 (RP2040/RP2350) FreeRTOS
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 static constexpr UBaseType_t uxCoreAffinityMask = ((1 << 0)); // task only run on core 0
@@ -43,7 +43,6 @@ static constexpr UBaseType_t uxCoreAffinityMask = ((1 << 0)); // task only run o
 // static constexpr uxCoreAffinityMask = ( ( 1 << 0 ) | ( 1 << 2 ) );  // e.g. task can only run on core 0 and core 2
 
 #define TASK_NAME STR(CLASSNAME)
-// #define TASK_NAME "ThreadApp"
 #define TASK_STACK_SIZE (4096 / sizeof(StackType_t))
 #define TASK_PRIORITY 6    // Priority, (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
 #define TASK_QUEUE_SIZE 16 // message queue size for app task
@@ -61,36 +60,38 @@ static StackType_t xStack[TASK_STACK_SIZE];
 static StaticTask_t xTaskBuffer;
 
 ///////////////////////////////////////////////////////////////////////
-CLASSNAME::CLASSNAME() : ThreadBase(TASK_QUEUE_SIZE, ucQueueStorageArea, &xStaticQueue),
-                         _ledGreen(),
-                         //  _buttonTrig(queue()),
-                         //  _buttonMode(queue()),
-                         //  _buttonFac(queue()),
-                         _debounceTimer(queue(), EventSystem, SysSoftwareTimer),
-                         _timer1Hz("Timer 1Hz",
-                                   pdMS_TO_TICKS(1000),
-                                   [](TimerHandle_t xTimer)
-                                   {
-                                       if (_instance)
-                                       {
-                                           auto context = reinterpret_cast<AppContext *>(_instance->context());
-                                           if (context && context->threadApp)
-                                           {
-                                               static_cast<ThreadApp *>(context->threadApp)->postEvent(EventSystem, SysSoftwareTimer, 0, (uint32_t)xTimer);
-                                           }
-                                       }
-                                   }),
-                         _handlerMap()
-{
-    _instance = this;
+// CLASSNAME::CLASSNAME() : ThreadBase(TASK_QUEUE_SIZE, ucQueueStorageArea, &xStaticQueue),
+// #if defined LED_BUILTIN
+//                          _ledBuildin(),
+// #endif
+//                          //  _buttonTrig(queue()),
+//                          //  _buttonMode(queue()),
+//                          //  _buttonFac(queue()),
+//                          //  _debounceTimer(queue(), EventSystem, SysSoftwareTimer),
+//                          _timer1Hz("Timer 1Hz",
+//                                    pdMS_TO_TICKS(1000),
+//                                    [](TimerHandle_t xTimer)
+//                                    {
+//                                        if (_instance)
+//                                        {
+//                                            auto context = reinterpret_cast<AppContext *>(_instance->context());
+//                                            if (context && context->threadApp)
+//                                            {
+//                                                static_cast<ThreadApp *>(context->threadApp)->postEvent(EventSystem, SysSoftwareTimer, 0, (uint32_t)xTimer);
+//                                            }
+//                                        }
+//                                    }),
+//                          _handlerMap()
+// {
+//     _instance = this;
 
-    _handlerMap = {
-        __EVENT_MAP(CLASSNAME, EventApp),
-        __EVENT_MAP(CLASSNAME, EventSystem),
-        __EVENT_MAP(CLASSNAME, EventGpioISR),
-        __EVENT_MAP(CLASSNAME, EventNull), // {EventNull, &CLASSNAME::handlerEventNull},
-    };
-}
+//     _handlerMap = {
+//         __EVENT_MAP(CLASSNAME, EventApp),
+//         __EVENT_MAP(CLASSNAME, EventSystem),
+//         __EVENT_MAP(CLASSNAME, EventGpioISR),
+//         __EVENT_MAP(CLASSNAME, EventNull), // {EventNull, &CLASSNAME::handlerEventNull},
+//     };
+// }
 
 void CLASSNAME::start(void *ctx)
 {
@@ -138,16 +139,36 @@ static StackType_t xStack[TASK_STACK_SIZE];
 static StaticTask_t xTaskBuffer;
 
 ////////////////////////////////////////////////////////////////////////////////////////////
-CLASSNAME::CLASSNAME() : ardufreertos::ThreadBase(TASK_QUEUE_SIZE, ucQueueStorageArea, &xStaticQueue),
-                         _handlerMap()
-{
-    _instance = this;
+// CLASSNAME::CLASSNAME() : ardufreertos::ThreadBase(TASK_QUEUE_SIZE, ucQueueStorageArea, &xStaticQueue),
+// #if defined LED_BUILTIN
+//                          _ledBuildin(),
+// #endif
+//                          //  _debounceTimer(queue(), EventSystem, SysSoftwareTimer),
+//                          _timer1Hz("Timer 1Hz",
+//                                    pdMS_TO_TICKS(1000),
+//                                    [](TimerHandle_t xTimer)
+//                                    {
+//                                        if (_instance)
+//                                        {
+//                                            auto context = reinterpret_cast<AppContext *>(_instance->context());
+//                                            if (context && context->threadApp)
+//                                            {
+//                                                static_cast<ThreadApp *>(context->threadApp)->postEvent(EventSystem, SysSoftwareTimer, 0, (uint32_t)xTimer);
+//                                            }
+//                                        }
+//                                    }),
+//                          _handlerMap()
+// {
+//     _instance = this;
 
-    // setup event handlers
-    _handlerMap = {
-        __EVENT_MAP(CLASSNAME, EventNull), // {EventNull, &CLASSNAME::handlerEventNull},
-    };
-}
+//     // setup event handlers
+//     _handlerMap = {
+//         __EVENT_MAP(CLASSNAME, EventApp),
+//         __EVENT_MAP(CLASSNAME, EventSystem),
+//         __EVENT_MAP(CLASSNAME, EventGpioISR),
+//         __EVENT_MAP(CLASSNAME, EventNull), // {EventNull, &CLASSNAME::handlerEventNull},
+//     };
+// }
 
 void CLASSNAME::start(void *ctx)
 {
@@ -168,29 +189,43 @@ void CLASSNAME::start(void *ctx)
 
 #elif defined ARDUPROF_MBED && defined ARDUINO_ARCH_MBED_RP2040
 ////////////////////////////////////////////////////////////////////////////////////////////
-// Thread for MBed RP2040
+// Thread for Pi Pico (RP2040) Mbed OS
 ////////////////////////////////////////////////////////////////////////////////////////////
 #define THREAD_QUEUE_SIZE (64 * EVENTS_EVENT_SIZE) // message queue size for app thread
-
+#include "../util/util.h"
 /////////////////////////////////////////////////////////////////////////////
 // use static threadQueue instead of heap
 static events::EventQueue threadQueue(THREAD_QUEUE_SIZE);
-CLASSNAME::CLASSNAME() : ardumbedos::ThreadBase(&threadQueue),
-                         _handlerMap(),
-                         _ledGreen(),
-                         _state({0})
-/////////////////////////////////////////////////////////////////////////////
-// threadQueue is dynamically allocate from heap
-// ThreadApp::ThreadApp() : ThreadBase(THREAD_QUEUE_SIZE),
+// CLASSNAME::CLASSNAME() : ardumbedos::ThreadBase(&threadQueue),
+// #if defined LED_BUILTIN
+//                          _ledBuildin(),
+// #endif
+//                          _timer1Hz(queue(), 1000ms, [](int id)
+//                                    {
+//                                      if (_instance)
+//                                      {
+//                                          auto context = reinterpret_cast<AppContext *>(_instance->context());
+//                                          if (context && context->threadApp)
+//                                          {
+//                                              static_cast<ThreadApp *>(context->threadApp)->postEvent(EventSystem, SysSoftwareTimer, 0, id);
+//                                          }
+//                                      } }),
 //                          _handlerMap()
-/////////////////////////////////////////////////////////////////////////////
-{
-    _handlerMap = {
-        __EVENT_MAP(CLASSNAME, EventApp),
-        __EVENT_MAP(CLASSNAME, EventNull), // {EventNull, &CLASSNAME::handlerEventNull},
-    };
-}
+// /////////////////////////////////////////////////////////////////////////////
+// // threadQueue is dynamically allocate from heap
+// // ThreadApp::ThreadApp() : ThreadBase(THREAD_QUEUE_SIZE),
+// //                          _handlerMap()
+// /////////////////////////////////////////////////////////////////////////////
+// {
+//     _handlerMap = {
+//         __EVENT_MAP(CLASSNAME, EventApp),
+//         __EVENT_MAP(CLASSNAME, EventSystem),
+//         __EVENT_MAP(CLASSNAME, EventGpioISR),
+//         __EVENT_MAP(CLASSNAME, EventNull), // {EventNull, &CLASSNAME::handlerEventNull},
+//     };
+// }
 
+/////////////////////////////////////////////////////////////////////////////
 void CLASSNAME::start(void *ctx)
 {
     LOG_TRACE("core", get_core_num(), ", ctx=(hex)", DebugLogBase::HEX, (uint32_t)ctx);
@@ -198,6 +233,57 @@ void CLASSNAME::start(void *ctx)
 }
 
 #endif
+
+/////////////////////////////////////////////////////////////////////////////
+CLASSNAME::CLASSNAME() :
+#if defined ARDUPROF_FREERTOS
+                         // #if defined ARDUPROF_FREERTOS && defined ARDUINO_ARCH_RP2040
+                         ardufreertos::ThreadBase(TASK_QUEUE_SIZE, ucQueueStorageArea, &xStaticQueue),
+                         _timer1Hz("Timer 1Hz",
+                                   pdMS_TO_TICKS(1000),
+                                   [](TimerHandle_t xTimer)
+                                   {
+                                       if (_instance)
+                                       {
+                                           auto context = reinterpret_cast<AppContext *>(_instance->context());
+                                           if (context && context->threadApp)
+                                           {
+                                               static_cast<ThreadApp *>(context->threadApp)->postEvent(EventSystem, SysSoftwareTimer, 0, (uint32_t)xTimer);
+                                           }
+                                       }
+                                   }),
+#elif defined ARDUPROF_MBED && defined ARDUINO_ARCH_MBED_RP2040
+                         ardumbedos::ThreadBase(&threadQueue),
+                        //  ardumbedos::ThreadBase(THREAD_QUEUE_SIZE),  // threadQueue is dynamically allocate from heap
+                         _timer1Hz(queue(), 1000ms, [](int id)
+                                   {
+                                     if (_instance)
+                                     {
+                                         auto context = reinterpret_cast<AppContext *>(_instance->context());
+                                         if (context && context->threadApp)
+                                         {
+                                             static_cast<ThreadApp *>(context->threadApp)->postEvent(EventSystem, SysSoftwareTimer, 0, id);
+                                         }
+                                     } }),
+#endif
+#if defined LED_BUILTIN
+                         _ledBuildin(),
+#endif
+                         //  _buttonTrig(queue()),
+                         //  _buttonMode(queue()),
+                         //  _buttonFac(queue()),
+                         //  _debounceTimer(queue(), EventSystem, SysSoftwareTimer),
+                         _handlerMap()
+{
+    _instance = this;
+
+    _handlerMap = {
+        __EVENT_MAP(CLASSNAME, EventApp),
+        __EVENT_MAP(CLASSNAME, EventSystem),
+        __EVENT_MAP(CLASSNAME, EventGpioISR),
+        __EVENT_MAP(CLASSNAME, EventNull), // {EventNull, &CLASSNAME::handlerEventNull},
+    };
+}
 
 void CLASSNAME::setup(void)
 {
@@ -207,7 +293,9 @@ void CLASSNAME::setup(void)
 
     ThreadBase::setup();
 
-    _ledGreen.off();
+#if defined LED_BUILTIN
+    _ledBuildin.off();
+#endif
 
     // _buttonTrig.init(EventSystem, SysButtonClick, SysButtonDoubleClick, SysButtonLongPress);
     // _buttonMode.init(EventSystem, SysButtonClick, SysButtonDoubleClick, SysButtonLongPress);
@@ -318,15 +406,18 @@ __EVENT_FUNC_DEFINITION(CLASSNAME, EventNull, msg) // void CLASSNAME::handlerEve
 /////////////////////////////////////////////////////////////////////////////
 void CLASSNAME::handlerSoftwareTimer(TimerHandle_t xTimer)
 {
-    if (xTimer == _debounceTimer.timer())
-    {
-        // LOG_TRACE("_debounceTimer::timer()");
-        // _debounceTimer.onEventTimer();
-    }
-    else if (xTimer == _timer1Hz.timer())
+    // if (xTimer == _debounceTimer.timer())
+    // {
+    //     // LOG_TRACE("_debounceTimer::timer()");
+    //     // _debounceTimer.onEventTimer();
+    // }
+    // else
+    if (xTimer == _timer1Hz.timer())
     {
         LOG_TRACE("_timer1Hz");
-        _ledGreen.toggle();
+#if defined LED_BUILTIN
+        _ledBuildin.toggle();
+#endif
 
         auto ctx = reinterpret_cast<AppContext *>(context());
         postEvent(ctx->queueMain, EventNull);
