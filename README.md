@@ -253,7 +253,7 @@ void loop()
 ``` 
 #define CLASSNAME ThreadGui
 ```
-- Edit "AppContext.h", modify the CLASSNAME macro as below: 
+- Edit "AppContext.h", modify the AppContext struct as below: 
 ```
     typedef struct _AppContext
     {
@@ -269,7 +269,7 @@ void loop()
         ardumbedos::ThreadBase *threadGui;  // <= add code here
     } AppContext;
 ```
-- Edit "AppContext.cpp", modify the CLASSNAME macro as below: 
+- Edit "AppContext.cpp", modify the AppContext code as below: 
 ```
     static AppContext appContext = {
         .queueMain = &queueMain,
@@ -277,7 +277,7 @@ void loop()
         .threadGui = ThreadGui::getInstance(),  // <= add code here
     };
 ```
-- Edit "arduino-app.ino", modify the CLASSNAME macro as below: 
+- Edit "arduino-app.ino", modify the startTasks code as below: 
 ```
 static void startTasks(void)
 {
