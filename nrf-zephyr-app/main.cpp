@@ -18,41 +18,47 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#pragma once
-#include "../AppEvent.h"
-#include "../ArduProfApp.h"
-#include <map>
+/*
+    v0.2.0: refactor _timer1Hz to dynamic from static, add printChipInfo()
+    v0.1.0: first release
+*/
 #include <stdbool.h>
-#include <stdint.h>
+#include <zephyr/types.h>
+#include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
 
-#undef CLASSNAME
-#define CLASSNAME ThreadApp
+#include "AppContext.h"
+#include "AppEvent.h"
+#include "thread/QueueMain.h"
 
-class CLASSNAME : public zephyros::ThreadBase {
-  public:
-    static CLASSNAME *getInstance(void);
-    virtual void start(void *);
-    virtual void onMessage(const Message &msg);
-    virtual void setup(void);
+// LOG_MODULE_REGISTER(main, LOG_LEVEL_INF);
+LOG_MODULE_REGISTER(main, LOG_LEVEL_DBG);
 
-  protected:
-    typedef void (CLASSNAME::*handlerFunc)(const Message &);
-    std::map<int16_t, handlerFunc> _handlerMap;
+///////////////////////////////////////////////////////////////////////
+int main(void)
+{
+    LOG_INF("Run...");
+    auto ctx = get_context();
+    if (ctx->threadApp)
+    {
+        ctx->threadApp->start(ctx);
+    }
+    else
+    {
+        LOG_ERR("No threadApp in context");
+    }
 
-  private:
-    CLASSNAME();
-    static CLASSNAME *_instance;
-    static struct k_timer _timer1Hz;
+    if (ctx->queueMain)
+    {
+        auto queueMain = static_cast<QueueMain *>(ctx->queueMain);
+        queueMain->start(ctx);
+        queueMain->postEvent(EventNull);
+        queueMain->messageLoopForever();
+    }
+    else
+    {
+        LOG_ERR("No queueMain in context");
+    }
 
-    static void _timerExpiryHandler(struct k_timer *timer_id);
-    static void _timerStopHandler(struct k_timer *timer);
-    void handlerSoftwareTimer(k_timer *timer);
-
-    ///////////////////////////////////////////////////////////////////////////
-    // event handler
-    ///////////////////////////////////////////////////////////////////////////
-    __EVENT_FUNC_DECLARATION(EventSystem)
-
-    // void handlerEventNull(const Message &msg);
-    __EVENT_FUNC_DECLARATION(EventNull)
-};
+    return 0;
+}

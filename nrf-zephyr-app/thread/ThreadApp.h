@@ -18,43 +18,42 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+#pragma once
+#include <map>
 #include <stdbool.h>
-#include <zephyr/types.h>
-#include <zephyr/kernel.h>
-#include <zephyr/logging/log.h>
+#include <stdint.h>
 
-#include "AppContext.h"
-#include "AppEvent.h"
-#include "thread/QueueMain.h"
+#include "../AppEvent.h"
+#include "../ArduProfApp.h"
 
-#define LOG_LEVEL 4
-LOG_MODULE_REGISTER(main, LOG_LEVEL);
+#undef CLASSNAME
+#define CLASSNAME ThreadApp
 
-///////////////////////////////////////////////////////////////////////
-int main(void)
-{
-    LOG_INF("Run...");
-    auto ctx = get_context();
-    if (ctx->threadApp)
-    {
-        ctx->threadApp->start(ctx);
-    }
-    else
-    {
-        LOG_ERR("No threadApp in context");
-    }
+class CLASSNAME : public zephyros::ThreadBase {
+  public:
+    static CLASSNAME *getInstance(void);
+    virtual void start(void *);
+    virtual void onMessage(const Message &msg);
+    virtual void setup(void);
 
-    if (ctx->queueMain)
-    {
-        auto queueMain = static_cast<QueueMain *>(ctx->queueMain);
-        queueMain->start(ctx);
-        queueMain->postEvent(EventNull);
-        queueMain->messageLoopForever();
-    }
-    else
-    {
-        LOG_ERR("No queueMain in context");
-    }
+  protected:
+    typedef void (CLASSNAME::*handlerFunc)(const Message &);
+    std::map<int16_t, handlerFunc> _handlerMap;
 
-    return 0;
-}
+  private:
+    CLASSNAME();
+    static CLASSNAME *_instance;
+    struct k_timer _timer1Hz;
+
+    static void _timerExpiryHandler(struct k_timer *timer);
+    static void _timerStopHandler(struct k_timer *timer);
+    void handlerSoftwareTimer(k_timer *timer);
+
+    ///////////////////////////////////////////////////////////////////////////
+    // event handler
+    ///////////////////////////////////////////////////////////////////////////
+    __EVENT_FUNC_DECLARATION(EventSystem)
+
+    // void handlerEventNull(const Message &msg);
+    __EVENT_FUNC_DECLARATION(EventNull)
+};

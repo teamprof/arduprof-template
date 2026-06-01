@@ -32,6 +32,8 @@ public:
   static QueueMain *getInstance(void);
   virtual void start(void *);
   virtual void onMessage(const Message &msg);
+
+  void printChipInfo(void);
   bool getLedState(void);
 
 protected:
@@ -41,7 +43,7 @@ protected:
 private:
   QueueMain();
   static QueueMain *_instance;
-  static struct k_timer _timer1Hz;
+  struct k_timer _timer1Hz;
 
   bool _ledState;
   void setLedState(bool ledState);

@@ -23,28 +23,31 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/types.h>
+#include <zephyr/device.h>
+#include <zephyr/drivers/hwinfo.h>
+#include <zephyr/sys/mem_stats.h>
+
+#if defined(CONFIG_SOC_NRF52840_QIAA) || defined(CONFIG_SOC_NRF52840)
+    // nRF52840 Specific Code
+    #include <hal/nrf_ficr.h>
+#elif defined(CONFIG_SOC_RP2350)
+    // RP2350 Specific Code
+    #include <hardware/regs/addressmap.h>
+#else
+    #error "Unsupported MCU"
+#endif
 
 #include "../peripheral/led_usr.h"
 #include "./QueueMain.h"
+#include "../AppVersion.h"
 
-#define LOG_LEVEL 4
-LOG_MODULE_REGISTER(QueueMain, LOG_LEVEL);
+// LOG_MODULE_REGISTER(QueueMain, LOG_LEVEL_INF);
+LOG_MODULE_REGISTER(QueueMain, LOG_LEVEL_DBG);
 
 ///////////////////////////////////////////////////////////////////////
 
-///////////////////////////////////////////////////////////////////////
-void QueueMain::_timerExpiryHandler(struct k_timer *timer_id)
-{
-    auto instance = QueueMain::getInstance();
-    instance->postEvent(EventSystem, SysSoftwareTimer, 0, (uint32_t)timer_id);
-}
-void QueueMain::_timerStopHandler(struct k_timer *timer)
-{
-    LOG_DBG("timer=%p", timer);
-}
-
-K_TIMER_DEFINE(QueueMain::_timer1Hz, QueueMain::_timerExpiryHandler,
-               QueueMain::_timerStopHandler);
+// K_TIMER_DEFINE(QueueMain::_timer1Hz, QueueMain::_timerExpiryHandler,
+//                QueueMain::_timerStopHandler);
 
 ///////////////////////////////////////////////////////////////////////
 #define TASK_QUEUE_SIZE 16 // message queue size for app task
@@ -80,12 +83,15 @@ void QueueMain::start(void *ctx)
 {
     MessageBus::start(ctx);
 
+    printChipInfo();
+
     int ret = led_usr::init();
     if (ret != 0)
     {
         LOG_ERR("Failed to initialize led_usr: %d", ret);
     }
 
+    k_timer_init(&_timer1Hz, QueueMain::_timerExpiryHandler, QueueMain::_timerStopHandler);
     k_timer_start(&_timer1Hz, K_MSEC(1000), K_SECONDS(1));
 }
 
@@ -156,4 +162,49 @@ void QueueMain::handlerSoftwareTimer(k_timer *timer)
     {
         LOG_DBG("unsupported timer=%p", timer);
     }
+}
+
+///////////////////////////////////////////////////////////////////////
+#if defined(CONFIG_SOC_NRF52840_QIAA) || defined(CONFIG_SOC_NRF52840)
+void QueueMain::printChipInfo(void)
+{
+    LOG_INF("===============================================================================");
+    LOG_INF("App Firmware version=%s", AppVersion::getFirmwareVersionString());
+
+    // Hardware Variant
+    // If INFO.VARIANT fails, try just NRF_FICR->VARIANT
+    uint32_t variant = NRF_FICR->INFO.VARIANT;
+    LOG_INF("Variant:     %c%c%c%c", 
+           (char)(variant >> 24), (char)(variant >> 16), 
+           (char)(variant >> 8),  (char)variant);
+    // Part Number
+    LOG_INF("MCU:         nRF%x", NRF_FICR->INFO.PART);
+
+    // Flash and RAM 
+    // In many newer nRF52 headers, these are at the top level of NRF_FICR
+    // or renamed within INFO. Let's use the absolute direct registers:
+    uint32_t codepagesize = NRF_FICR->CODEPAGESIZE; 
+    uint32_t codesize = NRF_FICR->CODESIZE;
+    
+    uint32_t flash_kb = (codesize * codepagesize) / 1024;
+    uint32_t ram_kb = NRF_FICR->INFO.RAM; 
+    
+    LOG_INF("Flash Size:  %d KB", flash_kb);
+    LOG_INF("RAM Size:    %d KB", ram_kb);
+
+    // Device ID
+    LOG_INF("Device ID:   %08X%08X", NRF_FICR->DEVICEID[1], NRF_FICR->DEVICEID[0]);
+
+    LOG_INF("===============================================================================");
+}
+#endif
+
+void QueueMain::_timerExpiryHandler(struct k_timer *timer_id)
+{
+    auto instance = QueueMain::getInstance();
+    instance->postEvent(EventSystem, SysSoftwareTimer, 0, (uint32_t)timer_id);
+}
+void QueueMain::_timerStopHandler(struct k_timer *timer)
+{
+    LOG_DBG("timer=%p", timer);
 }

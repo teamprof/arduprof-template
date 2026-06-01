@@ -25,8 +25,8 @@
 
 #include "./ThreadApp.h"
 
-#define LOG_LEVEL 4
-LOG_MODULE_REGISTER(CLASSNAME, LOG_LEVEL);
+// LOG_MODULE_REGISTER(CLASSNAME, LOG_LEVEL_INF);
+LOG_MODULE_REGISTER(CLASSNAME, LOG_LEVEL_DBG);
 
 ///////////////////////////////////////////////////////////////////////
 #define TASK_STACK_SIZE 1024
@@ -39,18 +39,9 @@ static_assert(TASK_PRIORITY <= K_LOWEST_APPLICATION_THREAD_PRIO,
 #define QUEUENAME CONCAT(CLASSNAME, taskQueue)
 
 ///////////////////////////////////////////////////////////////////////
-void CLASSNAME::_timerExpiryHandler(struct k_timer *timer_id)
-{
-    auto instance = CLASSNAME::getInstance();
-    instance->postEvent(EventSystem, SysSoftwareTimer, 0, (uint32_t)timer_id);
-}
-void CLASSNAME::_timerStopHandler(struct k_timer *timer)
-{
-    LOG_DBG("timer=%p", timer);
-}
 
-K_TIMER_DEFINE(CLASSNAME::_timer1Hz, CLASSNAME::_timerExpiryHandler,
-               CLASSNAME::_timerStopHandler);
+// K_TIMER_DEFINE(CLASSNAME::_timer1Hz, CLASSNAME::_timerExpiryHandler,
+//                CLASSNAME::_timerStopHandler);
 
 ///////////////////////////////////////////////////////////////////////
 static K_THREAD_STACK_DEFINE(_task_stack, TASK_STACK_SIZE);
@@ -64,7 +55,7 @@ CLASSNAME::CLASSNAME() : zephyros::ThreadBase(&QUEUENAME)
     _handlerMap = {
         __EVENT_MAP(CLASSNAME, EventSystem),
 
-        // {EventNull, &ThreadSlave::handlerEventNull},
+        // {EventNull, &CLASSNAME::handlerEventNull},
         __EVENT_MAP(CLASSNAME, EventNull),
     };
 }
@@ -94,7 +85,10 @@ void CLASSNAME::start(void *ctx)
 
 void CLASSNAME::setup(void)
 {
+    k_timer_init(&_timer1Hz, CLASSNAME::_timerExpiryHandler, CLASSNAME::_timerStopHandler);
     k_timer_start(&_timer1Hz, K_MSEC(1000), K_SECONDS(1));
+
+    // k_sleep(K_MSEC(1000));
 }
 
 void CLASSNAME::onMessage(const Message &msg)
@@ -112,7 +106,7 @@ void CLASSNAME::onMessage(const Message &msg)
 }
 
 ///////////////////////////////////////////////////////////////////////
-// void ThreadSlave::handlerEventSystem(const Message &msg)
+// void CLASSNAME::handlerEventSystem(const Message &msg)
 __EVENT_FUNC_DEFINITION(CLASSNAME, EventSystem, msg)
 {
     // LOG_DBG("EventSystem(%hd), iParam=%hd, uParam=%hu, lParam=0x%08x",
@@ -129,7 +123,7 @@ __EVENT_FUNC_DEFINITION(CLASSNAME, EventSystem, msg)
         break;
     }
 }
-// void ThreadSlave::handlerEventNull(const Message &msg)
+// void CLASSNAME::handlerEventNull(const Message &msg)
 __EVENT_FUNC_DEFINITION(CLASSNAME, EventNull, msg)
 {
     LOG_DBG("EventNull(%hd), iParam=%hd, uParam=%hu, lParam=%u", msg.event,
@@ -147,4 +141,15 @@ void CLASSNAME::handlerSoftwareTimer(k_timer *timer)
     {
         LOG_DBG("unsupported timer=%p", timer);
     }
+}
+
+///////////////////////////////////////////////////////////////////////
+void CLASSNAME::_timerExpiryHandler(struct k_timer *timer_id)
+{
+    auto instance = CLASSNAME::getInstance();
+    instance->postEvent(EventSystem, SysSoftwareTimer, 0, (uint32_t)timer_id);
+}
+void CLASSNAME::_timerStopHandler(struct k_timer *timer)
+{
+    LOG_DBG("timer=%p", timer);
 }
