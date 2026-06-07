@@ -1,0 +1,15 @@
+#include <zephyr/dt-bindings/pinctrl/rpi-pico-rp2040-pinctrl.h>
+
+/ {
+    aliases {
+        led0 = &ext_led;
+    };
+
+    leds {
+        compatible = "gpio-leds";
+        ext_led: led_0 {
+            gpios = <&gpio0 25 GPIO_ACTIVE_HIGH>;
+            label = "on-board LED";
+        };
+    };
+};
