@@ -1,3 +1,6 @@
-[submodule "nrf/lib/arduprof"]
-	path = nrf/lib/arduprof
+[submodule "nrf-zephyr-app/lib/arduprof"]
+	path = nrf-zephyr-app/lib/arduprof
+	url = https://github.com/teamprof/arduprof
+[submodule "pico-zephyr-app/lib/arduprof"]
+	path = pico-zephyr-app/lib/arduprof
 	url = https://github.com/teamprof/arduprof
