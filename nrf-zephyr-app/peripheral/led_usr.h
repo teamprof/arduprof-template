@@ -19,8 +19,13 @@
  * SOFTWARE.
  */
 #pragma once
+#include <zephyr/devicetree.h>
+#include <zephyr/kernel.h>
 
-namespace led_usr {
-int init(void);
-int set(bool state);
+#define LED_NODE DT_NODELABEL(DT_ALIAS(ledusr))
+
+namespace led_usr
+{
+    int init(void);
+    int set(bool state);
 }; // namespace led_usr

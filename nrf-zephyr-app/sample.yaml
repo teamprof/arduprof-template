@@ -1,5 +1,5 @@
 sample:
-  name: ArduProf Blinky Sample
+  name: ArduProf template nRF Sample
 tests:
   sample.basic.blinky:
     tags:
@@ -8,5 +8,3 @@ tests:
     filter: 
     depends_on: 
     harness: led
-    integration_platforms:
-      - frdm_k64f

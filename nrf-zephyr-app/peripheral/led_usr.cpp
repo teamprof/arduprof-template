@@ -18,30 +18,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+#include "led_usr.h"
+
+#if DT_NODE_HAS_STATUS_OKAY(LED_NODE)
+
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/kernel.h>
 
-namespace led_usr {
-static const struct gpio_dt_spec led =
-    GPIO_DT_SPEC_GET(DT_ALIAS(ledusr), gpios);
+namespace led_usr
+{
+    static const struct gpio_dt_spec led =
+        GPIO_DT_SPEC_GET(DT_ALIAS(ledusr), gpios);
 
-// Return values
-// 0	If successful.
-// -ENOTSUP	if any of the configuration options is not supported (unless
-// otherwise directed by flag documentation). -EINVAL	Invalid argument. -EIO
-// I/O error when accessing an external GPIO chip. -EWOULDBLOCK	if operation
-// would block.
-int init(void) {
-    if (!gpio_is_ready_dt(&led)) {
-        printk("Error: GPIO devices not ready\n");
-        return -EIO;
+    // Return values
+    // 0	If successful.
+    // -ENOTSUP	if any of the configuration options is not supported (unless
+    // otherwise directed by flag documentation). -EINVAL	Invalid argument. -EIO
+    // I/O error when accessing an external GPIO chip. -EWOULDBLOCK	if operation
+    // would block.
+    int init(void)
+    {
+        if (!gpio_is_ready_dt(&led))
+        {
+            printk("Error: GPIO devices not ready\n");
+            return -EIO;
+        }
+        return gpio_pin_configure_dt(&led, GPIO_OUTPUT_INACTIVE);
     }
-    return gpio_pin_configure_dt(&led, GPIO_OUTPUT_INACTIVE);
-}
 
-// Return values
-// 0	If successful.
-// -EIO	I/O error when accessing an external GPIO chip.
-// -EWOULDBLOCK	if operation would block.
-int set(bool state) { return gpio_pin_set_dt(&led, state); }
+    // Return values
+    // 0	If successful.
+    // -EIO	I/O error when accessing an external GPIO chip.
+    // -EWOULDBLOCK	if operation would block.
+    int set(bool state) { return gpio_pin_set_dt(&led, state); }
 } // namespace led_usr
+
+#endif // LED_NODE

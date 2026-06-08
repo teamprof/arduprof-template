@@ -18,10 +18,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-/*
-    v0.2.0: refactor _timer1Hz to dynamic from static, add printChipInfo()
-    v0.1.0: first release
-*/
 #include <stdbool.h>
 #include <zephyr/types.h>
 #include <zephyr/kernel.h>
