@@ -4,3 +4,12 @@
 [submodule "pico-zephyr-app/lib/arduprof"]
 	path = pico-zephyr-app/lib/arduprof
 	url = https://github.com/teamprof/arduprof
+[submodule "pico-nuttx-app/nuttx"]
+	path = pico-nuttx-app/nuttx
+	url = https://github.com/apache/nuttx.git
+[submodule "pico-nuttx-app/apps"]
+	path = pico-nuttx-app/apps
+	url = https://github.com/apache/nuttx-apps.git
+[submodule "pico-nuttx-app/src/lib/arduprof"]
+	path = pico-nuttx-app/src/lib/arduprof
+	url = https://github.com/teamprof/arduprof.git
