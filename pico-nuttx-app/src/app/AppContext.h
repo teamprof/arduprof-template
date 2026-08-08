@@ -19,14 +19,19 @@
  * SOFTWARE.
  */
 #pragma once
-#include <zephyr/devicetree.h>
-#include <zephyr/kernel.h>
+#include "./ArduProfApp.h"
 
-#define LED_NODE DT_ALIAS(ledusr)
-// #define LED_NODE DT_NODELABEL(led0)
-
-namespace led_usr
+namespace nuttxos
 {
-    int init(void);
-    int set(bool state);
-}; // namespace led_usr
+    class MessageBus;
+    class MessageQueue;
+    class ThreadBase;
+};
+
+typedef struct _AppContext
+{
+    nuttxos::MessageQueue *queueMain;
+    nuttxos::ThreadBase *threadApp;
+} AppContext;
+
+AppContext *get_context(void);

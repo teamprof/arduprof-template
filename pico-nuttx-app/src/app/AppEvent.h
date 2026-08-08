@@ -19,14 +19,17 @@
  * SOFTWARE.
  */
 #pragma once
-#include <zephyr/devicetree.h>
-#include <zephyr/kernel.h>
+#include <stdint.h>
 
-#define LED_NODE DT_ALIAS(ledusr)
-// #define LED_NODE DT_NODELABEL(led0)
-
-namespace led_usr
+enum AppEvent
 {
-    int init(void);
-    int set(bool state);
-}; // namespace led_usr
+    EventNull = 0,
+
+    EventSystem, // iParam=<SystemTriggerSource>
+};
+
+enum SystemTriggerSource
+{
+    SysNull = 0,
+    SysSoftwareTimer, // lParam=xTimer:uint32_t
+};

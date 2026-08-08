@@ -18,15 +18,51 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#pragma once
-#include <zephyr/devicetree.h>
-#include <zephyr/kernel.h>
+#include <nuttx/config.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <syslog.h>
 
-#define LED_NODE DT_ALIAS(ledusr)
-// #define LED_NODE DT_NODELABEL(led0)
+#include "AppContext.h"
+#include "AppEvent.h"
+#include "thread/QueueMain.h"
 
-namespace led_usr
+#ifdef __cplusplus
+extern "C" int main(int argc, FAR char *argv[]);
+#endif
+
+int main(int argc, FAR char *argv[])
 {
-    int init(void);
-    int set(bool state);
-}; // namespace led_usr
+    // // Only allow warnings and higher (suppresses LOG_INFO and LOG_DEBUG)
+    // setlogmask(LOG_UPTO(LOG_WARNING));
+
+    // Allow everything up to and including debug
+    setlogmask(LOG_UPTO(LOG_DEBUG));
+
+
+    auto ctx = get_context();
+    if (ctx->threadApp)
+    {
+        ctx->threadApp->start(ctx);
+    }
+    else
+    {
+        syslog(LOG_ERR, "No threadApp in context");
+    }
+
+    if (ctx->queueMain)
+    {
+        auto queueMain = static_cast<QueueMain *>(ctx->queueMain);
+        queueMain->start(ctx);
+        queueMain->postEvent(EventNull);
+        // queueMain->messageLoop(MSEC2TICK(0));
+        queueMain->messageLoopForever();
+    }
+    else
+    {
+        syslog(LOG_ERR, "No queueMain in context");
+    }
+
+    return EXIT_SUCCESS;
+}

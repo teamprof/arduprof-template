@@ -17,31 +17,14 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-/*
-    v0.4.0: change QueueMain to CLASSNAME in QueueMain.cpp/h, use zephyros::SoftwareTimer for PeriodicTimer
-    v0.3.0: add #if DT_NODE_HAS_STATUS_OKAY(LED_NODE) for led code
-    v0.2.0: refactor _timer1Hz to dynamic from static, add printChipInfo()
-    v0.1.0: first release
-*/
 #pragma once
-#include <stdint.h>
 
-#include "./ArduProfApp.h"
+#include "../ArduProfApp.h"
 
-#define MajorVer 0
-#define MinorVer 4
-#define BuildVer 0
-
-class AppVersion
+class PeriodicTimer : public zephyros::SoftwareTimer
 {
 public:
-    static uint32_t getFirmwareVersion(void)
+    PeriodicTimer(k_timeout_t duration, k_timeout_t period, Callback callback) : SoftwareTimer(duration, period, callback)
     {
-        return (MajorVer << 24) | (MinorVer << 16) | (BuildVer);
-    }
-
-    static const char *getFirmwareVersionString(void)
-    {
-        return STR(MajorVer) "." STR(MinorVer) "." STR(BuildVer);
     }
 };

@@ -11,8 +11,9 @@ Leveraging the arduprof-template brings significant benefits to embedded develop
 
 
 ---
-## supported Hardware (ESP32, ESP32-S3, ESP32C3, Pi Pico/Pico2)
+## supported Hardware (ESP32, ESP32-S3, ESP32C3, ESP32C6, Pi Pico/Pico2)
 The following boards are supported by this project:
+- [FireBeetle 2 ESP32-C6 IoT Development Board](https://bit.ly/452Ueoq)
 - [ESP32-DevKitC V1](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/hw-reference/esp32/get-started-devkitc.html)
 - [ESP32-S3-DevKitC-1 v1.1](https://docs.espressif.com/projects/esp-idf/en/latest/esp32s3/hw-reference/esp32s3/user-guide-devkitc-1.html)
 - [ESP32C3-CORE](https://wiki.luatos.com/chips/esp32c3/board.html)

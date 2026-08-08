@@ -19,14 +19,45 @@
  * SOFTWARE.
  */
 #pragma once
-#include <zephyr/devicetree.h>
-#include <zephyr/kernel.h>
+#include <map>
+#include <stdbool.h>
+#include <stdint.h>
 
-#define LED_NODE DT_ALIAS(ledusr)
-// #define LED_NODE DT_NODELABEL(led0)
+#include "../AppEvent.h"
+#include "../ArduProfApp.h"
 
-namespace led_usr
+#undef CLASSNAME
+#define CLASSNAME QueueMain
+
+class CLASSNAME : public nuttxos::MessageBus
 {
-    int init(void);
-    int set(bool state);
-}; // namespace led_usr
+public:
+    static CLASSNAME *getInstance(void);
+    virtual void start(void *);
+    virtual void onMessage(const Message &msg);
+
+    void printChipInfo(void);
+    //   bool getLedState(void);
+
+protected:
+    typedef void (CLASSNAME::*handlerFunc)(const Message &);
+    std::map<int16_t, handlerFunc> _handlerMap;
+
+private:
+    CLASSNAME();
+    static CLASSNAME *_instance;
+    nuttxos::PeriodicTimer _timer1Hz;
+
+    bool _ledState;
+    bool getLedState(void);
+    void setLedState(bool ledState);
+    void toggleLedState(void);
+
+    void handlerSoftwareTimer(timer_t timerid);
+
+    ///////////////////////////////////////////////////////////////////////////
+    // event handler
+    ///////////////////////////////////////////////////////////////////////////
+    __EVENT_FUNC_DECLARATION(EventSystem)
+    __EVENT_FUNC_DECLARATION(EventNull)     // void handlerEventNull(const Message &msg);
+};

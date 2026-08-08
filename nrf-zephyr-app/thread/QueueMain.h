@@ -25,39 +25,41 @@
 
 #include "../AppEvent.h"
 #include "../ArduProfApp.h"
+#include "../peripheral/PeriodicTimer.h"
 
-class QueueMain : public zephyros::MessageBus
+#undef CLASSNAME
+#define CLASSNAME QueueMain
+
+class CLASSNAME : public zephyros::MessageBus
 {
 public:
-  static QueueMain *getInstance(void);
-  virtual void start(void *);
-  virtual void onMessage(const Message &msg);
+    static CLASSNAME *getInstance(void);
+    virtual void start(void *);
+    virtual void onMessage(const Message &msg);
 
-  void printChipInfo(void);
-  bool getLedState(void);
+    void printChipInfo(void);
+    bool getLedState(void);
 
 protected:
-  typedef void (QueueMain::*handlerFunc)(const Message &);
-  std::map<int16_t, handlerFunc> _handlerMap;
+    typedef void (CLASSNAME::*handlerFunc)(const Message &);
+    std::map<int16_t, handlerFunc> _handlerMap;
 
 private:
-  QueueMain();
-  static QueueMain *_instance;
-  struct k_timer _timer1Hz;
+    CLASSNAME();
+    static CLASSNAME *_instance;
+    PeriodicTimer _timer1Hz;
 
-  bool _ledState;
-  void setLedState(bool ledState);
-  void toggleLedState(void);
+    bool _ledState;
+    void setLedState(bool ledState);
+    void toggleLedState(void);
 
-  static void _timerExpiryHandler(struct k_timer *timer_id);
-  static void _timerStopHandler(struct k_timer *timer);
-  void handlerSoftwareTimer(k_timer *timer);
+    void handlerSoftwareTimer(const Message &msg);
 
-  ///////////////////////////////////////////////////////////////////////////
-  // event handler
-  ///////////////////////////////////////////////////////////////////////////
-  __EVENT_FUNC_DECLARATION(EventSystem)
+    ///////////////////////////////////////////////////////////////////////////
+    // event handler
+    ///////////////////////////////////////////////////////////////////////////
+    __EVENT_FUNC_DECLARATION(EventSystem)
 
-  // void handlerEventNull(const Message &msg);
-  __EVENT_FUNC_DECLARATION(EventNull)
+    // void handlerEventNull(const Message &msg);
+    __EVENT_FUNC_DECLARATION(EventNull)
 };

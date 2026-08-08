@@ -41,45 +41,52 @@
 #include "./QueueMain.h"
 #include "../AppVersion.h"
 
-// LOG_MODULE_REGISTER(QueueMain, LOG_LEVEL_INF);
-LOG_MODULE_REGISTER(QueueMain, LOG_LEVEL_DBG);
+// LOG_MODULE_REGISTER(CLASSNAME, LOG_LEVEL_INF);
+LOG_MODULE_REGISTER(CLASSNAME, LOG_LEVEL_DBG);
 
 ///////////////////////////////////////////////////////////////////////
 
-// K_TIMER_DEFINE(QueueMain::_timer1Hz, QueueMain::_timerExpiryHandler,
-//                QueueMain::_timerStopHandler);
+// K_TIMER_DEFINE(CLASSNAME::_timer1Hz, CLASSNAME::_timerExpiryHandler,
+//                CLASSNAME::_timerStopHandler);
 
 ///////////////////////////////////////////////////////////////////////
 #define TASK_QUEUE_SIZE 16 // message queue size for app task
-#define QUEUENAME CONCAT(QueueMain, taskQueue)
+#define QUEUENAME CONCAT(CLASSNAME, taskQueue)
 
 ///////////////////////////////////////////////////////////////////////
 K_MSGQ_DEFINE(QUEUENAME, sizeof(Message), TASK_QUEUE_SIZE, alignof(uint32_t));
 
-QueueMain *QueueMain::_instance = NULL;
+CLASSNAME *CLASSNAME::_instance = NULL;
 
 ///////////////////////////////////////////////////////////////////////
-QueueMain::QueueMain() : zephyros::MessageBus(&QUEUENAME), _ledState(false)
+CLASSNAME::CLASSNAME() : zephyros::MessageBus(&QUEUENAME),
+                         _timer1Hz(K_MSEC(1000), K_SECONDS(1), [](struct k_timer *timer, bool isStop)
+                                   {
+                                       auto instance = CLASSNAME::getInstance();
+                                       instance->postEvent(EventSystem, SysSoftwareTimer, isStop, (uint32_t)timer);
+                                       //
+                                   }),
+                         _ledState(false)
 {
     _handlerMap = {
-        __EVENT_MAP(QueueMain, EventSystem),
+        __EVENT_MAP(CLASSNAME, EventSystem),
 
-        // {EventNull, &QueueMain::handlerEventNull},
-        __EVENT_MAP(QueueMain, EventNull),
+        // {EventNull, &CLASSNAME::handlerEventNull},
+        __EVENT_MAP(CLASSNAME, EventNull),
     };
 }
 
-QueueMain *QueueMain::getInstance(void)
+CLASSNAME *CLASSNAME::getInstance(void)
 {
     if (!_instance)
     {
-        static QueueMain instance;
+        static CLASSNAME instance;
         _instance = &instance;
     }
     return _instance;
 }
 
-void QueueMain::start(void *ctx)
+void CLASSNAME::start(void *ctx)
 {
     MessageBus::start(ctx);
 
@@ -87,17 +94,23 @@ void QueueMain::start(void *ctx)
 
 #if DT_NODE_HAS_STATUS_OKAY(LED_NODE)
     int ret = led_usr::init();
-    if (ret != 0)
+    if (!ret)
+    {
+        LOG_DBG("led_usr::init() success");
+    }
+    else
     {
         LOG_ERR("Failed to initialize led_usr: %d", ret);
     }
 #endif // LED_NODE
 
-    k_timer_init(&_timer1Hz, QueueMain::_timerExpiryHandler, QueueMain::_timerStopHandler);
-    k_timer_start(&_timer1Hz, K_MSEC(1000), K_SECONDS(1));
+    _timer1Hz.start();
+    // _timer1Hz.stop();
+
+    // k_sleep(K_MSEC(1000));
 }
 
-void QueueMain::onMessage(const Message &msg)
+void CLASSNAME::onMessage(const Message &msg)
 {
     auto func = _handlerMap[msg.event];
     if (func)
@@ -106,14 +119,14 @@ void QueueMain::onMessage(const Message &msg)
     }
     else
     {
-        LOG_DBG("Unsupported event=%hd, iParam=%hd, uParam=%hu, lParam=%u",
+        LOG_WRN("Unsupported event=%hd, iParam=%hd, uParam=%hu, lParam=%u",
                 msg.event, msg.iParam, msg.uParam, msg.lParam);
     }
 }
 
 ///////////////////////////////////////////////////////////////////////
-bool QueueMain::getLedState(void) { return _ledState; }
-void QueueMain::setLedState(bool ledState)
+bool CLASSNAME::getLedState(void) { return _ledState; }
+void CLASSNAME::setLedState(bool ledState)
 {
     _ledState = ledState;
     LOG_DBG("_ledState=%d", (int)_ledState);
@@ -127,12 +140,10 @@ void QueueMain::setLedState(bool ledState)
 #endif // LED_NODE
 }
 
-void QueueMain::toggleLedState(void) { setLedState(!_ledState); }
+void CLASSNAME::toggleLedState(void) { setLedState(!_ledState); }
 
 ///////////////////////////////////////////////////////////////////////
-
-// void QueueMain::handlerEventSystem(const Message &msg)
-__EVENT_FUNC_DEFINITION(QueueMain, EventSystem, msg)
+__EVENT_FUNC_DEFINITION(CLASSNAME, EventSystem, msg)
 {
     // LOG_DBG("EventSystem(%hd), iParam=%hd, uParam=%hu, lParam=0x%08x",
     // msg.event, msg.iParam, msg.uParam, msg.lParam);
@@ -141,26 +152,35 @@ __EVENT_FUNC_DEFINITION(QueueMain, EventSystem, msg)
     switch (src)
     {
     case SysSoftwareTimer:
-        handlerSoftwareTimer((k_timer *)(msg.lParam));
+        handlerSoftwareTimer(msg);
         break;
     default:
         LOG_DBG("unsupported SystemTriggerSource=%hd", src);
         break;
     }
 }
-// void QueueMain::handlerEventNull(const Message &msg)
-__EVENT_FUNC_DEFINITION(QueueMain, EventNull, msg)
+// void CLASSNAME::handlerEventNull(const Message &msg)
+__EVENT_FUNC_DEFINITION(CLASSNAME, EventNull, msg)
 {
-    LOG_DBG("EventNull(%hd), iParam=%hd, uParam=%hu, lParam=%u", msg.event,
-            msg.iParam, msg.uParam, msg.lParam);
+    LOG_DBG("EventNull(%hd), iParam=%hd, uParam=%hu, lParam=%u",
+            msg.event, msg.iParam, msg.uParam, msg.lParam);
 }
 
-void QueueMain::handlerSoftwareTimer(k_timer *timer)
+void CLASSNAME::handlerSoftwareTimer(const Message &msg)
 {
-    if (timer == &_timer1Hz)
+    auto timer = reinterpret_cast<k_timer *>(msg.lParam);
+    if (timer == _timer1Hz.timer())
     {
-        // LOG_DBG("timer1Hz");
-        toggleLedState();
+        auto isStop = static_cast<bool>(msg.uParam);
+        if (!isStop)
+        {
+            // LOG_DBG("timer1Hz");
+            toggleLedState();
+        }
+        else
+        {
+            LOG_DBG("_timer1Hz=%p stopped", timer);
+        }
     }
     else
     {
@@ -170,7 +190,7 @@ void QueueMain::handlerSoftwareTimer(k_timer *timer)
 
 ///////////////////////////////////////////////////////////////////////
 #if defined(CONFIG_SOC_NRF52840_QIAA) || defined(CONFIG_SOC_NRF52840)
-void QueueMain::printChipInfo(void)
+void CLASSNAME::printChipInfo(void)
 {
     LOG_INF("===============================================================================");
     LOG_INF("App Firmware version=%s", AppVersion::getFirmwareVersionString());
@@ -202,13 +222,3 @@ void QueueMain::printChipInfo(void)
     LOG_INF("===============================================================================");
 }
 #endif
-
-void QueueMain::_timerExpiryHandler(struct k_timer *timer_id)
-{
-    auto instance = QueueMain::getInstance();
-    instance->postEvent(EventSystem, SysSoftwareTimer, 0, (uint32_t)timer_id);
-}
-void QueueMain::_timerStopHandler(struct k_timer *timer)
-{
-    LOG_DBG("timer=%p", timer);
-}

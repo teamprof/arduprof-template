@@ -18,15 +18,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#pragma once
-#include <zephyr/devicetree.h>
-#include <zephyr/kernel.h>
+#include "./AppContext.h"
+#include "./thread/QueueMain.h"
+#include "./thread/ThreadApp.h"
 
-#define LED_NODE DT_ALIAS(ledusr)
-// #define LED_NODE DT_NODELABEL(led0)
-
-namespace led_usr
+AppContext *get_context(void)
 {
-    int init(void);
-    int set(bool state);
-}; // namespace led_usr
+    static AppContext *_instance = nullptr;
+    if (!_instance)
+    {
+        static AppContext instance = {
+            // .queueMain = nullptr,
+            .queueMain = QueueMain::getInstance(),
+            // .threadApp = nullptr,
+            .threadApp = ThreadApp::getInstance(),
+        };
+        _instance = &instance;
+    }
+    return _instance;
+}

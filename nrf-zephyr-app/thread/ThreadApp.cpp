@@ -50,7 +50,13 @@ K_MSGQ_DEFINE(QUEUENAME, sizeof(Message), TASK_QUEUE_SIZE, alignof(uint32_t));
 CLASSNAME *CLASSNAME::_instance = NULL;
 
 ///////////////////////////////////////////////////////////////////////
-CLASSNAME::CLASSNAME() : zephyros::ThreadBase(&QUEUENAME)
+CLASSNAME::CLASSNAME() : zephyros::ThreadBase(&QUEUENAME),
+                         _timer1Hz(K_MSEC(1000), K_SECONDS(1), [](struct k_timer *timer, bool isStop)
+                                   {
+                                       auto instance = CLASSNAME::getInstance();
+                                       instance->postEvent(EventSystem, SysSoftwareTimer, isStop, (uint32_t)timer);
+                                       //
+                                   })
 {
     _handlerMap = {
         __EVENT_MAP(CLASSNAME, EventSystem),
@@ -85,8 +91,8 @@ void CLASSNAME::start(void *ctx)
 
 void CLASSNAME::setup(void)
 {
-    k_timer_init(&_timer1Hz, CLASSNAME::_timerExpiryHandler, CLASSNAME::_timerStopHandler);
-    k_timer_start(&_timer1Hz, K_MSEC(1000), K_SECONDS(1));
+    _timer1Hz.start();
+    // _timer1Hz.stop();
 
     // k_sleep(K_MSEC(1000));
 }
@@ -106,7 +112,6 @@ void CLASSNAME::onMessage(const Message &msg)
 }
 
 ///////////////////////////////////////////////////////////////////////
-// void CLASSNAME::handlerEventSystem(const Message &msg)
 __EVENT_FUNC_DEFINITION(CLASSNAME, EventSystem, msg)
 {
     // LOG_DBG("EventSystem(%hd), iParam=%hd, uParam=%hu, lParam=0x%08x",
@@ -116,7 +121,7 @@ __EVENT_FUNC_DEFINITION(CLASSNAME, EventSystem, msg)
     switch (src)
     {
     case SysSoftwareTimer:
-        handlerSoftwareTimer((k_timer *)(msg.lParam));
+        handlerSoftwareTimer(msg);
         break;
     default:
         LOG_WRN("unsupported SystemTriggerSource=%hd", src);
@@ -131,25 +136,24 @@ __EVENT_FUNC_DEFINITION(CLASSNAME, EventNull, msg)
 }
 
 ///////////////////////////////////////////////////////////////////////
-void CLASSNAME::handlerSoftwareTimer(k_timer *timer)
+
+void CLASSNAME::handlerSoftwareTimer(const Message &msg)
 {
-    if (timer == &_timer1Hz)
+    auto timer = reinterpret_cast<k_timer *>(msg.lParam);
+    if (timer == _timer1Hz.timer())
     {
-        LOG_DBG("timer1Hz");
+        auto isStop = static_cast<bool>(msg.uParam);
+        if (!isStop)
+        {
+            LOG_DBG("timer1Hz");
+        }
+        else
+        {
+            LOG_DBG("_timer1Hz=%p stopped", timer);
+        }
     }
     else
     {
         LOG_DBG("unsupported timer=%p", timer);
     }
-}
-
-///////////////////////////////////////////////////////////////////////
-void CLASSNAME::_timerExpiryHandler(struct k_timer *timer_id)
-{
-    auto instance = CLASSNAME::getInstance();
-    instance->postEvent(EventSystem, SysSoftwareTimer, 0, (uint32_t)timer_id);
-}
-void CLASSNAME::_timerStopHandler(struct k_timer *timer)
-{
-    LOG_DBG("timer=%p", timer);
 }

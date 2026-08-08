@@ -18,9 +18,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 /*
-    v0.4.0: change QueueMain to CLASSNAME in QueueMain.cpp/h, use zephyros::SoftwareTimer for PeriodicTimer
-    v0.3.0: add #if DT_NODE_HAS_STATUS_OKAY(LED_NODE) for led code
-    v0.2.0: refactor _timer1Hz to dynamic from static, add printChipInfo()
     v0.1.0: first release
 */
 #pragma once
@@ -29,7 +26,7 @@
 #include "./ArduProfApp.h"
 
 #define MajorVer 0
-#define MinorVer 4
+#define MinorVer 1
 #define BuildVer 0
 
 class AppVersion

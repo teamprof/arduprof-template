@@ -18,15 +18,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#pragma once
-#include <zephyr/devicetree.h>
-#include <zephyr/kernel.h>
-
-#define LED_NODE DT_ALIAS(ledusr)
-// #define LED_NODE DT_NODELABEL(led0)
+#include <nuttx/board.h>
 
 namespace led_usr
 {
-    int init(void);
-    int set(bool state);
-}; // namespace led_usr
+    // Return values
+    // 0	If successful.
+    int init(void)
+    {
+        // already invoked board_userled_initialize() during boot
+        return 0;
+    }
+
+    // Return values
+    // 0	If successful.
+    int set(bool state)
+    {
+        board_userled(0, state);
+        return 0;
+    }
+
+} // namespace led_usr

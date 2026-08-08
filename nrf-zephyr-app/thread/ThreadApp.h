@@ -25,29 +25,33 @@
 
 #include "../AppEvent.h"
 #include "../ArduProfApp.h"
+#include "../peripheral/PeriodicTimer.h"
 
 #undef CLASSNAME
 #define CLASSNAME ThreadApp
 
-class CLASSNAME : public zephyros::ThreadBase {
-  public:
+class CLASSNAME : public zephyros::ThreadBase
+{
+public:
     static CLASSNAME *getInstance(void);
     virtual void start(void *);
     virtual void onMessage(const Message &msg);
     virtual void setup(void);
 
-  protected:
+protected:
     typedef void (CLASSNAME::*handlerFunc)(const Message &);
     std::map<int16_t, handlerFunc> _handlerMap;
 
-  private:
+private:
     CLASSNAME();
     static CLASSNAME *_instance;
-    struct k_timer _timer1Hz;
+    PeriodicTimer _timer1Hz;
+    // struct k_timer _timer1Hz;
 
-    static void _timerExpiryHandler(struct k_timer *timer);
-    static void _timerStopHandler(struct k_timer *timer);
-    void handlerSoftwareTimer(k_timer *timer);
+    // static void _timerExpiryHandler(struct k_timer *timer);
+    // static void _timerStopHandler(struct k_timer *timer);
+    // void handlerSoftwareTimer(k_timer *timer);
+    void handlerSoftwareTimer(const Message &msg);
 
     ///////////////////////////////////////////////////////////////////////////
     // event handler
