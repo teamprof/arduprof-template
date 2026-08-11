@@ -25,7 +25,8 @@ AppContext.cxx.home.teamprof.prj.arduino.arduprof-template.pico-nuttx-app.src.ap
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/irq.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/syscall.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/chip/irq.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/armv6-m/irq.h \
+ /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/armv8-m/irq.h \
+ /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/armv8-m/nvicpri.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/chip/chip.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/semaphore.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/time.h \
@@ -49,51 +50,19 @@ AppContext.cxx.home.teamprof.prj.arduino.arduprof-template.pico-nuttx-app.src.ap
  ../lib/arduprof/src/./os/nuttx/thread/.././MessageQueue.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/mqueue.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/fcntl.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/spinlock.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/arch.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/arch.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/pgalloc.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/cache.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/sched.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/addrenv.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/atomic.h \
- /usr/include/newlib/c++/13.2.1/atomic \
- /usr/include/newlib/c++/13.2.1/bits/atomic_base.h \
- /usr/include/newlib/c++/13.2.1/arm-none-eabi/thumb/v6-m/nofp/bits/c++config.h \
- /usr/include/newlib/c++/13.2.1/arm-none-eabi/thumb/v6-m/nofp/bits/os_defines.h \
- /usr/include/newlib/c++/13.2.1/arm-none-eabi/thumb/v6-m/nofp/bits/cpu_defines.h \
- /usr/include/newlib/c++/13.2.1/pstl/pstl_config.h \
- /usr/include/newlib/c++/13.2.1/new \
- /usr/include/newlib/c++/13.2.1/bits/exception.h \
- /usr/include/newlib/c++/13.2.1/bits/atomic_lockfree_defines.h \
- /usr/include/newlib/c++/13.2.1/bits/move.h \
- /usr/include/newlib/c++/13.2.1/type_traits \
+ /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/mm/gran.h \
+ ../lib/arduprof/src/./os/nuttx/peripheral/PeriodicTimer.h \
+ ../lib/arduprof/src/./os/nuttx/peripheral/./SoftwareTimer.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/wqueue.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/list_type.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/wdog.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/list.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/event.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/fs/fs.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/fs/ioctl.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/serial/tioctl.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/fs/uio.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/sys/uio.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/dirent.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/mm/map.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/mm/gran.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/spawn.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/spawn.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/spinlock_type.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/spinlock.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/barriers.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/armv6-m/barriers.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/tls.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/atexit.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/stdlib.h \
- ../lib/arduprof/src/./os/nuttx/peripheral/PeriodicTimer.h \
- ../lib/arduprof/src/./os/nuttx/peripheral/./SoftwareTimer.h \
  thread/QueueMain.h /usr/include/newlib/c++/13.2.1/map \
  /usr/include/newlib/c++/13.2.1/bits/requires_hosted.h \
+ /usr/include/newlib/c++/13.2.1/arm-none-eabi/thumb/v8-m.main+fp/hard/bits/c++config.h \
+ /usr/include/newlib/c++/13.2.1/arm-none-eabi/thumb/v8-m.main+fp/hard/bits/os_defines.h \
+ /usr/include/newlib/c++/13.2.1/arm-none-eabi/thumb/v8-m.main+fp/hard/bits/cpu_defines.h \
+ /usr/include/newlib/c++/13.2.1/pstl/pstl_config.h \
  /usr/include/newlib/c++/13.2.1/bits/stl_tree.h \
  /usr/include/newlib/c++/13.2.1/bits/stl_algobase.h \
  /usr/include/newlib/c++/13.2.1/bits/functexcept.h \
@@ -102,6 +71,8 @@ AppContext.cxx.home.teamprof.prj.arduino.arduprof-template.pico-nuttx-app.src.ap
  /usr/include/newlib/c++/13.2.1/ext/type_traits.h \
  /usr/include/newlib/c++/13.2.1/ext/numeric_traits.h \
  /usr/include/newlib/c++/13.2.1/bits/stl_pair.h \
+ /usr/include/newlib/c++/13.2.1/type_traits \
+ /usr/include/newlib/c++/13.2.1/bits/move.h \
  /usr/include/newlib/c++/13.2.1/bits/utility.h \
  /usr/include/newlib/c++/13.2.1/bits/stl_iterator_base_types.h \
  /usr/include/newlib/c++/13.2.1/bits/stl_iterator_base_funcs.h \
@@ -113,8 +84,10 @@ AppContext.cxx.home.teamprof.prj.arduino.arduprof-template.pico-nuttx-app.src.ap
  /usr/include/newlib/c++/13.2.1/bits/predefined_ops.h \
  /usr/include/newlib/c++/13.2.1/bit \
  /usr/include/newlib/c++/13.2.1/bits/allocator.h \
- /usr/include/newlib/c++/13.2.1/arm-none-eabi/thumb/v6-m/nofp/bits/c++allocator.h \
+ /usr/include/newlib/c++/13.2.1/arm-none-eabi/thumb/v8-m.main+fp/hard/bits/c++allocator.h \
  /usr/include/newlib/c++/13.2.1/bits/new_allocator.h \
+ /usr/include/newlib/c++/13.2.1/new \
+ /usr/include/newlib/c++/13.2.1/bits/exception.h \
  /usr/include/newlib/c++/13.2.1/bits/memoryfwd.h \
  /usr/include/newlib/c++/13.2.1/bits/stl_function.h \
  /usr/include/newlib/c++/13.2.1/backward/binders.h \
@@ -155,7 +128,8 @@ QueueMain.cxx.home.teamprof.prj.arduino.arduprof-template.pico-nuttx-app.src.app
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/irq.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/syscall.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/chip/irq.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/armv6-m/irq.h \
+ /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/armv8-m/irq.h \
+ /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/armv8-m/nvicpri.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/chip/chip.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/semaphore.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/time.h \
@@ -185,9 +159,9 @@ QueueMain.cxx.home.teamprof.prj.arduino.arduprof-template.pico-nuttx-app.src.app
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/atomic.h \
  /usr/include/newlib/c++/13.2.1/atomic \
  /usr/include/newlib/c++/13.2.1/bits/atomic_base.h \
- /usr/include/newlib/c++/13.2.1/arm-none-eabi/thumb/v6-m/nofp/bits/c++config.h \
- /usr/include/newlib/c++/13.2.1/arm-none-eabi/thumb/v6-m/nofp/bits/os_defines.h \
- /usr/include/newlib/c++/13.2.1/arm-none-eabi/thumb/v6-m/nofp/bits/cpu_defines.h \
+ /usr/include/newlib/c++/13.2.1/arm-none-eabi/thumb/v8-m.main+fp/hard/bits/c++config.h \
+ /usr/include/newlib/c++/13.2.1/arm-none-eabi/thumb/v8-m.main+fp/hard/bits/os_defines.h \
+ /usr/include/newlib/c++/13.2.1/arm-none-eabi/thumb/v8-m.main+fp/hard/bits/cpu_defines.h \
  /usr/include/newlib/c++/13.2.1/pstl/pstl_config.h \
  /usr/include/newlib/c++/13.2.1/new \
  /usr/include/newlib/c++/13.2.1/bits/exception.h \
@@ -201,7 +175,7 @@ QueueMain.cxx.home.teamprof.prj.arduino.arduprof-template.pico-nuttx-app.src.app
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/spinlock_type.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/spinlock.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/barriers.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/armv6-m/barriers.h \
+ /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/armv8-m/barriers.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/lib/lib.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/kmalloc.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/stdlib.h \
@@ -231,7 +205,7 @@ QueueMain.cxx.home.teamprof.prj.arduino.arduprof-template.pico-nuttx-app.src.app
  /usr/include/newlib/c++/13.2.1/bits/predefined_ops.h \
  /usr/include/newlib/c++/13.2.1/bit \
  /usr/include/newlib/c++/13.2.1/bits/allocator.h \
- /usr/include/newlib/c++/13.2.1/arm-none-eabi/thumb/v6-m/nofp/bits/c++allocator.h \
+ /usr/include/newlib/c++/13.2.1/arm-none-eabi/thumb/v8-m.main+fp/hard/bits/c++allocator.h \
  /usr/include/newlib/c++/13.2.1/bits/new_allocator.h \
  /usr/include/newlib/c++/13.2.1/bits/memoryfwd.h \
  /usr/include/newlib/c++/13.2.1/bits/stl_function.h \
@@ -263,22 +237,12 @@ QueueMain.cxx.home.teamprof.prj.arduino.arduprof-template.pico-nuttx-app.src.app
  thread/./../../lib/arduprof/src/./os/nuttx/thread/.././MessageQueue.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/mqueue.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/fcntl.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/spinlock.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/arch.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/arch.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/pgalloc.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/cache.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/sched.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/addrenv.h \
+ thread/./../../lib/arduprof/src/./os/nuttx/peripheral/PeriodicTimer.h \
+ thread/./../../lib/arduprof/src/./os/nuttx/peripheral/./SoftwareTimer.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/wqueue.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/list_type.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/wdog.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/list.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/event.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/tls.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/atexit.h \
- thread/./../../lib/arduprof/src/./os/nuttx/peripheral/PeriodicTimer.h \
- thread/./../../lib/arduprof/src/./os/nuttx/peripheral/./SoftwareTimer.h \
  thread/../AppVersion.h thread/../peripheral/led_usr.h
 ThreadApp.cxx.home.teamprof.prj.arduino.arduprof-template.pico-nuttx-app.src.app.o: \
  thread/ThreadApp.cxx \
@@ -301,9 +265,9 @@ ThreadApp.cxx.home.teamprof.prj.arduino.arduprof-template.pico-nuttx-app.src.app
  /usr/lib/gcc/arm-none-eabi/13.2.1/include/stdarg.h thread/./ThreadApp.h \
  /usr/include/newlib/c++/13.2.1/map \
  /usr/include/newlib/c++/13.2.1/bits/requires_hosted.h \
- /usr/include/newlib/c++/13.2.1/arm-none-eabi/thumb/v6-m/nofp/bits/c++config.h \
- /usr/include/newlib/c++/13.2.1/arm-none-eabi/thumb/v6-m/nofp/bits/os_defines.h \
- /usr/include/newlib/c++/13.2.1/arm-none-eabi/thumb/v6-m/nofp/bits/cpu_defines.h \
+ /usr/include/newlib/c++/13.2.1/arm-none-eabi/thumb/v8-m.main+fp/hard/bits/c++config.h \
+ /usr/include/newlib/c++/13.2.1/arm-none-eabi/thumb/v8-m.main+fp/hard/bits/os_defines.h \
+ /usr/include/newlib/c++/13.2.1/arm-none-eabi/thumb/v8-m.main+fp/hard/bits/cpu_defines.h \
  /usr/include/newlib/c++/13.2.1/pstl/pstl_config.h \
  /usr/include/newlib/c++/13.2.1/bits/stl_tree.h \
  /usr/include/newlib/c++/13.2.1/bits/stl_algobase.h \
@@ -326,7 +290,7 @@ ThreadApp.cxx.home.teamprof.prj.arduino.arduprof-template.pico-nuttx-app.src.app
  /usr/include/newlib/c++/13.2.1/bits/predefined_ops.h \
  /usr/include/newlib/c++/13.2.1/bit \
  /usr/include/newlib/c++/13.2.1/bits/allocator.h \
- /usr/include/newlib/c++/13.2.1/arm-none-eabi/thumb/v6-m/nofp/bits/c++allocator.h \
+ /usr/include/newlib/c++/13.2.1/arm-none-eabi/thumb/v8-m.main+fp/hard/bits/c++allocator.h \
  /usr/include/newlib/c++/13.2.1/bits/new_allocator.h \
  /usr/include/newlib/c++/13.2.1/new \
  /usr/include/newlib/c++/13.2.1/bits/exception.h \
@@ -365,7 +329,8 @@ ThreadApp.cxx.home.teamprof.prj.arduino.arduprof-template.pico-nuttx-app.src.app
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/irq.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/syscall.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/chip/irq.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/armv6-m/irq.h \
+ /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/armv8-m/irq.h \
+ /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/armv8-m/nvicpri.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/chip/chip.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/semaphore.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/queue.h \
@@ -381,46 +346,36 @@ ThreadApp.cxx.home.teamprof.prj.arduino.arduprof-template.pico-nuttx-app.src.app
  thread/./../../lib/arduprof/src/./os/nuttx/thread/.././MessageQueue.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/mqueue.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/fcntl.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/spinlock.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/arch.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/arch.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/pgalloc.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/cache.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/sched.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/addrenv.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/atomic.h \
- /usr/include/newlib/c++/13.2.1/atomic \
- /usr/include/newlib/c++/13.2.1/bits/atomic_base.h \
- /usr/include/newlib/c++/13.2.1/bits/atomic_lockfree_defines.h \
+ /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/mm/gran.h \
+ thread/./../../lib/arduprof/src/./os/nuttx/peripheral/PeriodicTimer.h \
+ thread/./../../lib/arduprof/src/./os/nuttx/peripheral/./SoftwareTimer.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/wqueue.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/list_type.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/wdog.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/list.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/event.h \
+ /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/init.h \
+ /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/board.h \
+ /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/stdio.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/fs/fs.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/fs/ioctl.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/serial/tioctl.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/fs/uio.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/sys/uio.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/dirent.h \
+ /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/atomic.h \
+ /usr/include/newlib/c++/13.2.1/atomic \
+ /usr/include/newlib/c++/13.2.1/bits/atomic_base.h \
+ /usr/include/newlib/c++/13.2.1/bits/atomic_lockfree_defines.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/mm/map.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/mm/gran.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/spawn.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/spawn.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/spinlock_type.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/spinlock.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/barriers.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/armv6-m/barriers.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/tls.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/atexit.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/stdlib.h \
- thread/./../../lib/arduprof/src/./os/nuttx/peripheral/PeriodicTimer.h \
- thread/./../../lib/arduprof/src/./os/nuttx/peripheral/./SoftwareTimer.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/init.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/board.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/stdio.h \
+ /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/armv8-m/barriers.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/lib/lib.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/kmalloc.h \
+ /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/stdlib.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/mm/mm.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/userspace.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/malloc.h
@@ -458,9 +413,9 @@ arduprof_main.cxx.home.teamprof.prj.arduino.arduprof-template.pico-nuttx-app.src
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/atomic.h \
  /usr/include/newlib/c++/13.2.1/atomic \
  /usr/include/newlib/c++/13.2.1/bits/atomic_base.h \
- /usr/include/newlib/c++/13.2.1/arm-none-eabi/thumb/v6-m/nofp/bits/c++config.h \
- /usr/include/newlib/c++/13.2.1/arm-none-eabi/thumb/v6-m/nofp/bits/os_defines.h \
- /usr/include/newlib/c++/13.2.1/arm-none-eabi/thumb/v6-m/nofp/bits/cpu_defines.h \
+ /usr/include/newlib/c++/13.2.1/arm-none-eabi/thumb/v8-m.main+fp/hard/bits/c++config.h \
+ /usr/include/newlib/c++/13.2.1/arm-none-eabi/thumb/v8-m.main+fp/hard/bits/os_defines.h \
+ /usr/include/newlib/c++/13.2.1/arm-none-eabi/thumb/v8-m.main+fp/hard/bits/cpu_defines.h \
  /usr/include/newlib/c++/13.2.1/pstl/pstl_config.h \
  /usr/include/newlib/c++/13.2.1/new \
  /usr/include/newlib/c++/13.2.1/bits/exception.h \
@@ -475,7 +430,8 @@ arduprof_main.cxx.home.teamprof.prj.arduino.arduprof-template.pico-nuttx-app.src
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/irq.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/syscall.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/chip/irq.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/armv6-m/irq.h \
+ /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/armv8-m/irq.h \
+ /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/armv8-m/nvicpri.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/chip/chip.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/semaphore.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/queue.h \
@@ -498,7 +454,7 @@ arduprof_main.cxx.home.teamprof.prj.arduino.arduprof-template.pico-nuttx-app.src
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/spinlock_type.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/spinlock.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/barriers.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/armv6-m/barriers.h \
+ /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/armv8-m/barriers.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/lib/lib.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/kmalloc.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/stdlib.h \
@@ -517,23 +473,13 @@ arduprof_main.cxx.home.teamprof.prj.arduino.arduprof-template.pico-nuttx-app.src
  ../lib/arduprof/src/./os/nuttx/thread/.././MessageQueue.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/mqueue.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/fcntl.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/spinlock.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/arch.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/arch/arch.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/pgalloc.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/cache.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/sched.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/addrenv.h \
+ ../lib/arduprof/src/./os/nuttx/peripheral/PeriodicTimer.h \
+ ../lib/arduprof/src/./os/nuttx/peripheral/./SoftwareTimer.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/wqueue.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/list_type.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/wdog.h \
  /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/list.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/event.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/tls.h \
- /home/teamprof/prj/arduino/arduprof-template/pico-nuttx-app/nuttx/include/nuttx/atexit.h \
- ../lib/arduprof/src/./os/nuttx/peripheral/PeriodicTimer.h \
- ../lib/arduprof/src/./os/nuttx/peripheral/./SoftwareTimer.h AppEvent.h \
- thread/QueueMain.h /usr/include/newlib/c++/13.2.1/map \
+ AppEvent.h thread/QueueMain.h /usr/include/newlib/c++/13.2.1/map \
  /usr/include/newlib/c++/13.2.1/bits/requires_hosted.h \
  /usr/include/newlib/c++/13.2.1/bits/stl_tree.h \
  /usr/include/newlib/c++/13.2.1/bits/stl_algobase.h \
@@ -554,7 +500,7 @@ arduprof_main.cxx.home.teamprof.prj.arduino.arduprof-template.pico-nuttx-app.src
  /usr/include/newlib/c++/13.2.1/bits/predefined_ops.h \
  /usr/include/newlib/c++/13.2.1/bit \
  /usr/include/newlib/c++/13.2.1/bits/allocator.h \
- /usr/include/newlib/c++/13.2.1/arm-none-eabi/thumb/v6-m/nofp/bits/c++allocator.h \
+ /usr/include/newlib/c++/13.2.1/arm-none-eabi/thumb/v8-m.main+fp/hard/bits/c++allocator.h \
  /usr/include/newlib/c++/13.2.1/bits/new_allocator.h \
  /usr/include/newlib/c++/13.2.1/bits/memoryfwd.h \
  /usr/include/newlib/c++/13.2.1/bits/stl_function.h \

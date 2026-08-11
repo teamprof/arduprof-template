@@ -35,8 +35,10 @@
 #include <unistd.h>
 
 ///////////////////////////////////////////////////////////////////////
-#define CORE 0 // running core (0 or 1)
-// #define CORE 1 // running core (0 or 1)
+// #define CORE (-1) // let OS to assign running core
+#define CORE 0 // running on core 0 (-1, 0, or 1)
+// #define CORE 1 // running on core 1 (-1, 0, or 1)
+
 #define TASK_STACK_SIZE 2048
 #define TASK_PRIORITY 8         // Lower Number = Higher Priority, number is 1 ~ 255
 #define TASK_QUEUE_LENGTH 16    // message queue length for app task
