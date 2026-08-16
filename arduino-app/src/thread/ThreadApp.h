@@ -30,17 +30,21 @@
 #undef CLASSNAME
 #define CLASSNAME ThreadApp
 
-class CLASSNAME : public
-#if defined ARDUPROF_FREERTOS
-                  ardufreertos::ThreadBase
-#elif defined ARDUPROF_MBED
-                  ardumbedos::ThreadBase
-#endif
+class CLASSNAME : public NAMESPACE::ThreadBase
 {
-public:
+private:
     CLASSNAME();
 
-    static CLASSNAME *getInstance(void);
+public:
+    CLASSNAME(const CLASSNAME&) = delete;
+    CLASSNAME& operator=(const CLASSNAME&) = delete;
+
+    // Clean, thread-safe, zero-overhead Singleton
+    static CLASSNAME& getInstance() 
+    {
+        static CLASSNAME instance; // Guaranteed thread-safe initialization in C++ 11+
+        return instance;
+    }
 
     virtual void start(void *);
     virtual void onMessage(const Message &msg);
@@ -50,13 +54,7 @@ protected:
     std::map<int16_t, handlerFunc> _handlerMap;
 
 private:
-    static CLASSNAME *_instance;
-
-#if defined ARDUPROF_FREERTOS
-    ardufreertos::PeriodicTimer _timer1Hz;
-#elif defined ARDUPROF_MBED
-    ardumbedos::PeriodicTimer _timer1Hz;
-#endif
+    NAMESPACE::PeriodicTimer _timer1Hz;
 
 #if defined LED_BUILTIN
     LedBuildin _ledBuildin;

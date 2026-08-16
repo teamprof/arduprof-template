@@ -23,15 +23,25 @@
 #include "../ArduProfApp.h"
 #include "../AppEvent.h"
 
-class QueueMain final : public
-#if defined ARDUPROF_FREERTOS
-                        ardufreertos::MessageBus
-#elif defined ARDUPROF_MBED
-                        ardumbedos::MessageBus
-#endif
+#undef CLASSNAME
+#define CLASSNAME QueueMain
+
+
+class CLASSNAME final : public NAMESPACE::MessageBus
 {
+private:
+    CLASSNAME();
+
 public:
-    QueueMain();
+    CLASSNAME(const CLASSNAME&) = delete;
+    CLASSNAME& operator=(const CLASSNAME&) = delete;
+
+    // Clean, thread-safe, zero-overhead Singleton
+    static CLASSNAME& getInstance() 
+    {
+        static CLASSNAME instance; // Guaranteed thread-safe initialization in C++ 11+
+        return instance;
+    }
 
     virtual void start(void *);
     virtual void onMessage(const Message &msg) override;
@@ -39,17 +49,11 @@ public:
     static void printChipInfo(void);
 
 protected:
-    typedef void (QueueMain::*funcPtr)(const Message &);
+    typedef void (CLASSNAME::*funcPtr)(const Message &);
     std::map<int16_t, funcPtr> _handlerMap;
 
 private:
-    static QueueMain *_instance;
-
-#if defined ARDUPROF_FREERTOS
-    ardufreertos::PeriodicTimer _timer1Hz;
-#elif defined ARDUPROF_MBED
-    ardumbedos::PeriodicTimer _timer1Hz;
-#endif
+    NAMESPACE::PeriodicTimer _timer1Hz;
 
     void handlerSoftwareTimer(TimerHandle_t xTimer);
 

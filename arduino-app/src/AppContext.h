@@ -47,4 +47,4 @@ typedef struct _AppContext
 
 #endif
 
-extern AppContext *getAppContext(void);
+extern AppContext &getAppContext(void);

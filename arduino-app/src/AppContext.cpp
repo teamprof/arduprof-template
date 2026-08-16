@@ -25,21 +25,11 @@
 #include "./thread/QueueMain.h"
 
 ///////////////////////////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////////
-AppContext *getAppContext(void)
+AppContext &getAppContext(void)
 {
-    static AppContext *_instance = nullptr;
-    if (!_instance)
-    {
-        static QueueMain queueMain;
-
-        static AppContext appContext = {
-            .queueMain = &queueMain,
-            .threadApp = ThreadApp::getInstance(),
-        };
-        _instance = &appContext;
-    }
-
-    return _instance;
+    static AppContext instance = {  // Guaranteed thread-safe initialization in C++ 11+
+        .queueMain = &QueueMain::getInstance(),
+        .threadApp = &ThreadApp::getInstance(),
+    }; 
+    return instance;
 }

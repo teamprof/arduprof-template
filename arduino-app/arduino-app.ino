@@ -20,6 +20,7 @@
 /*
 For ESP32/ESP32C3/ESP32S3, please use the following settings in Arduino IDE:
 - On Arduino IDE, click menu "Tools" -> "Board: " -> "Board Manager..." -> 
+    "DFRobot FireBeetle 2 ESP32-C6" or
     "RAKwirelss RAK3112" or
     "ESP32S3 Dev Module" or
     "XIAO_ESP32C3" or
@@ -53,15 +54,19 @@ static void initGlobalVar(void)
 
 static void startTasks(void)
 {
-
-    auto ctx = getAppContext();
-    if (ctx->queueMain)
+    auto &ctx = getAppContext();
+    if (ctx.queueMain)
     {
-        static_cast<QueueMain *>(ctx->queueMain)->start(ctx);
+        static_cast<QueueMain *>(ctx.queueMain)->start(&ctx);
+    } else {
+        LOG_DEBUG("ctx.queueMain is NULL");
     }
-    if (ctx->threadApp)
+
+    if (ctx.threadApp)
     {
-        ctx->threadApp->start(ctx);
+        ctx.threadApp->start(&ctx);
+    } else {
+        LOG_DEBUG("ctx.threadApp is NULL");
     }
 }
 
@@ -116,8 +121,8 @@ void loop()
     // static int count = 0;
     // LOG_TRACE("count=", count++);
 
-    auto ctx = getAppContext();
-    auto qMain = static_cast<QueueMain *>(ctx->queueMain);
+    auto& ctx = getAppContext();
+    auto qMain = static_cast<QueueMain *>(ctx.queueMain);
     assert(qMain);
     qMain->messageLoop(0); // non-blocking
     // qMain->messageLoop();  // blocking until event received and proceed

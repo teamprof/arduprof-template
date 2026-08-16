@@ -21,17 +21,6 @@
 #include "../AppContext.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////
-CLASSNAME *CLASSNAME::_instance = nullptr;
-
-CLASSNAME *CLASSNAME::getInstance(void)
-{
-    if (!_instance)
-    {
-        static CLASSNAME instance;
-        _instance = &instance;
-    }
-    return _instance;
-}
 
 #if defined ARDUPROF_FREERTOS && defined ARDUINO_ARCH_RP2040
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -60,52 +49,29 @@ static StackType_t xStack[TASK_STACK_SIZE];
 static StaticTask_t xTaskBuffer;
 
 ///////////////////////////////////////////////////////////////////////
-// CLASSNAME::CLASSNAME() : ThreadBase(TASK_QUEUE_SIZE, ucQueueStorageArea, &xStaticQueue),
-// #if defined LED_BUILTIN
-//                          _ledBuildin(),
-// #endif
-//                          //  _buttonTrig(queue()),
-//                          //  _buttonMode(queue()),
-//                          //  _buttonFac(queue()),
-//                          //  _debounceTimer(queue(), EventSystem, SysSoftwareTimer),
-//                          _timer1Hz("Timer 1Hz",
-//                                    pdMS_TO_TICKS(1000),
-//                                    [](TimerHandle_t xTimer)
-//                                    {
-//                                        if (_instance)
-//                                        {
-//                                            auto context = reinterpret_cast<AppContext *>(_instance->context());
-//                                            if (context && context->threadApp)
-//                                            {
-//                                                static_cast<ThreadApp *>(context->threadApp)->postEvent(EventSystem, SysSoftwareTimer, 0, (uint32_t)xTimer);
-//                                            }
-//                                        }
-//                                    }),
-//                          _handlerMap()
-// {
-//     _instance = this;
-
-//     _handlerMap = {
-//         __EVENT_MAP(CLASSNAME, EventApp),
-//         __EVENT_MAP(CLASSNAME, EventSystem),
-//         __EVENT_MAP(CLASSNAME, EventGpioISR),
-//         __EVENT_MAP(CLASSNAME, EventNull), // {EventNull, &CLASSNAME::handlerEventNull},
-//     };
-// }
-
 void CLASSNAME::start(void *ctx)
 {
-    LOG_TRACE("core", get_core_num());
-    configASSERT(ctx);
-    _context = ctx;
+#if defined ARDUPROF_FREERTOS 
+#if defined ARDUINO_ARCH_RP2040
+    LOG_TRACE("core", get_core_num(), ", uxTaskPriorityGet(NULL)=", uxTaskPriorityGet(NULL));
+#elif defined ARDUINO_ARCH_ESP32
+    LOG_TRACE("on core ", xPortGetCoreID(), ", xPortGetFreeHeapSize()=", xPortGetFreeHeapSize());
+#else    
+    LOG_TRACE("");
+#endif
+#elif defined ARDUPROF_MBED
+    LOG_TRACE("Mbed OS thread started");
+#endif
+
+    ThreadBase::start(ctx);
 
     _taskHandle = xTaskCreateStatic(
         [](void *instance)
         { static_cast<ThreadBase *>(instance)->run(); },
         TASK_NAME,
-        TASK_STACK_SIZE, // This stack size can be checked & adjusted by reading the Stack Highwater
+        TASK_STACK_SIZE,    // This stack size can be checked & adjusted by reading the Stack Highwater
         this,
-        TASK_PRIORITY, // Priority, (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
+        TASK_PRIORITY,      // Priority, (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
         xStack,
         &xTaskBuffer);
     configASSERT(_taskHandle);
@@ -139,36 +105,6 @@ static StackType_t xStack[TASK_STACK_SIZE];
 static StaticTask_t xTaskBuffer;
 
 ////////////////////////////////////////////////////////////////////////////////////////////
-// CLASSNAME::CLASSNAME() : ardufreertos::ThreadBase(TASK_QUEUE_SIZE, ucQueueStorageArea, &xStaticQueue),
-// #if defined LED_BUILTIN
-//                          _ledBuildin(),
-// #endif
-//                          //  _debounceTimer(queue(), EventSystem, SysSoftwareTimer),
-//                          _timer1Hz("Timer 1Hz",
-//                                    pdMS_TO_TICKS(1000),
-//                                    [](TimerHandle_t xTimer)
-//                                    {
-//                                        if (_instance)
-//                                        {
-//                                            auto context = reinterpret_cast<AppContext *>(_instance->context());
-//                                            if (context && context->threadApp)
-//                                            {
-//                                                static_cast<ThreadApp *>(context->threadApp)->postEvent(EventSystem, SysSoftwareTimer, 0, (uint32_t)xTimer);
-//                                            }
-//                                        }
-//                                    }),
-//                          _handlerMap()
-// {
-//     _instance = this;
-
-//     // setup event handlers
-//     _handlerMap = {
-//         __EVENT_MAP(CLASSNAME, EventApp),
-//         __EVENT_MAP(CLASSNAME, EventSystem),
-//         __EVENT_MAP(CLASSNAME, EventGpioISR),
-//         __EVENT_MAP(CLASSNAME, EventNull), // {EventNull, &CLASSNAME::handlerEventNull},
-//     };
-// }
 
 void CLASSNAME::start(void *ctx)
 {
@@ -196,34 +132,6 @@ void CLASSNAME::start(void *ctx)
 /////////////////////////////////////////////////////////////////////////////
 // use static threadQueue instead of heap
 static events::EventQueue threadQueue(THREAD_QUEUE_SIZE);
-// CLASSNAME::CLASSNAME() : ardumbedos::ThreadBase(&threadQueue),
-// #if defined LED_BUILTIN
-//                          _ledBuildin(),
-// #endif
-//                          _timer1Hz(queue(), 1000ms, [](int id)
-//                                    {
-//                                      if (_instance)
-//                                      {
-//                                          auto context = reinterpret_cast<AppContext *>(_instance->context());
-//                                          if (context && context->threadApp)
-//                                          {
-//                                              static_cast<ThreadApp *>(context->threadApp)->postEvent(EventSystem, SysSoftwareTimer, 0, id);
-//                                          }
-//                                      } }),
-//                          _handlerMap()
-// /////////////////////////////////////////////////////////////////////////////
-// // threadQueue is dynamically allocate from heap
-// // ThreadApp::ThreadApp() : ThreadBase(THREAD_QUEUE_SIZE),
-// //                          _handlerMap()
-// /////////////////////////////////////////////////////////////////////////////
-// {
-//     _handlerMap = {
-//         __EVENT_MAP(CLASSNAME, EventApp),
-//         __EVENT_MAP(CLASSNAME, EventSystem),
-//         __EVENT_MAP(CLASSNAME, EventGpioISR),
-//         __EVENT_MAP(CLASSNAME, EventNull), // {EventNull, &CLASSNAME::handlerEventNull},
-//     };
-// }
 
 /////////////////////////////////////////////////////////////////////////////
 void CLASSNAME::start(void *ctx)
@@ -237,34 +145,18 @@ void CLASSNAME::start(void *ctx)
 /////////////////////////////////////////////////////////////////////////////
 CLASSNAME::CLASSNAME() :
 #if defined ARDUPROF_FREERTOS
-                         // #if defined ARDUPROF_FREERTOS && defined ARDUINO_ARCH_RP2040
-                         ardufreertos::ThreadBase(TASK_QUEUE_SIZE, ucQueueStorageArea, &xStaticQueue),
-                         _timer1Hz("Timer 1Hz",
-                                   pdMS_TO_TICKS(1000),
-                                   [](TimerHandle_t xTimer)
-                                   {
-                                       if (_instance)
-                                       {
-                                           auto context = reinterpret_cast<AppContext *>(_instance->context());
-                                           if (context && context->threadApp)
-                                           {
-                                               static_cast<ThreadApp *>(context->threadApp)->postEvent(EventSystem, SysSoftwareTimer, 0, (uint32_t)xTimer);
-                                           }
-                                       }
-                                   }),
+                        ardufreertos::ThreadBase(TASK_QUEUE_SIZE, ucQueueStorageArea, &xStaticQueue),
+                        _timer1Hz("Timer 1Hz", pdMS_TO_TICKS(1000),
+                            [](TimerHandle_t xTimer) {
+                                getInstance().postEvent(EventSystem, SysSoftwareTimer, 0, (uint32_t)xTimer);
+                            }),
 #elif defined ARDUPROF_MBED && defined ARDUINO_ARCH_MBED_RP2040
                          ardumbedos::ThreadBase(&threadQueue),
                         //  ardumbedos::ThreadBase(THREAD_QUEUE_SIZE),  // threadQueue is dynamically allocate from heap
                          _timer1Hz(queue(), 1000ms, [](int id)
                                    {
-                                     if (_instance)
-                                     {
-                                         auto context = reinterpret_cast<AppContext *>(_instance->context());
-                                         if (context && context->threadApp)
-                                         {
-                                             static_cast<ThreadApp *>(context->threadApp)->postEvent(EventSystem, SysSoftwareTimer, 0, id);
-                                         }
-                                     } }),
+                                        getInstance().postEvent(EventSystem, SysSoftwareTimer, 0, (uint32_t)xTimer);
+                                   }),
 #endif
 #if defined LED_BUILTIN
                          _ledBuildin(),
@@ -275,8 +167,6 @@ CLASSNAME::CLASSNAME() :
                          //  _debounceTimer(queue(), EventSystem, SysSoftwareTimer),
                          _handlerMap()
 {
-    _instance = this;
-
     _handlerMap = {
         __EVENT_MAP(CLASSNAME, EventApp),
         __EVENT_MAP(CLASSNAME, EventSystem),
@@ -287,9 +177,18 @@ CLASSNAME::CLASSNAME() :
 
 void CLASSNAME::setup(void)
 {
-#if defined ARDUPROF_FREERTOS && defined ARDUINO_ARCH_RP2040
+#if defined ARDUPROF_FREERTOS 
+#if defined ARDUINO_ARCH_RP2040
     LOG_TRACE("core", get_core_num(), ", uxTaskPriorityGet(NULL)=", uxTaskPriorityGet(NULL));
+#elif defined ARDUINO_ARCH_ESP32
+// #elif defined ARDUPROF_FREERTOS && defined ESP_PLATFORM
+    LOG_TRACE("on core ", xPortGetCoreID(), ", xPortGetFreeHeapSize()=", xPortGetFreeHeapSize());
+#else    
+    LOG_TRACE("");
 #endif
+#elif defined ARDUPROF_MBED
+    LOG_TRACE("Mbed OS thread started");
+#endif    
 
     ThreadBase::setup();
 

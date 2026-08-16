@@ -49,3 +49,12 @@
 // #include <ArduProf.h>
 
 #include <ArduProf.h>
+
+
+#undef NAMESPACE
+#if defined ARDUPROF_FREERTOS
+#define NAMESPACE ardufreertos
+#elif defined ARDUPROF_MBED
+#define NAMESPACE ardumbedos
+#endif
+

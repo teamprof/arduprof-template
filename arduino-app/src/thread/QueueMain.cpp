@@ -21,8 +21,6 @@
 #include "../AppContext.h"
 #include "../AppVersion.h"
 
-////////////////////////////////////////////////////////////////////////////////////////////
-QueueMain *QueueMain::_instance = nullptr;
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -35,7 +33,7 @@ static uint8_t ucQueueStorageArea[TASK_QUEUE_SIZE * sizeof(Message)];
 static StaticQueue_t xStaticQueue;
 
 ////////////////////////////////////////////////////////////////////////////////////////////
-void QueueMain::printChipInfo(void)
+void CLASSNAME::printChipInfo(void)
 {
     PRINTLN("===============================================================================");
     PRINTLN("App Firmware version=", AppVersion::getFirmwareVersionString());
@@ -58,7 +56,7 @@ void QueueMain::printChipInfo(void)
 ////////////////////////////////////////////////////////////////////////////////////////////
 #define THREAD_QUEUE_SIZE (128 * EVENTS_EVENT_SIZE) // message queue size for app thread
 
-void QueueMain::printChipInfo(void)
+void CLASSNAME::printChipInfo(void)
 {
     PRINTLN("===============================================================================");
     PRINTLN("App Firmware version=", AppVersion::getFirmwareVersionString());
@@ -73,51 +71,41 @@ static events::EventQueue threadQueue(THREAD_QUEUE_SIZE);
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
-QueueMain::QueueMain() :
+CLASSNAME::CLASSNAME() :
 #if defined ARDUPROF_FREERTOS
                          ardufreertos::MessageBus(TASK_QUEUE_SIZE, ucQueueStorageArea, &xStaticQueue),
                          _timer1Hz("Timer 1Hz",
                                    pdMS_TO_TICKS(1000),
                                    [](TimerHandle_t xTimer)
                                    {
-                                       if (_instance)
-                                       {
-                                           auto context = reinterpret_cast<AppContext *>(_instance->context());
-                                           if (context && context->queueMain)
-                                           {
-                                               static_cast<QueueMain *>(context->queueMain)->postEvent(EventSystem, SysSoftwareTimer, 0, (uint32_t)xTimer);
-                                           }
-                                       }
+                                        getInstance().postEvent(EventSystem, SysSoftwareTimer, 0, (uint32_t)xTimer);
                                    }),
 #elif defined ARDUPROF_MBED
                          ardumbedos::MessageBus(&threadQueue),
                          _timer1Hz(queue(), 1000ms, [](int id)
                                    {
-                                     if (_instance)
-                                     {
-                                         auto context = reinterpret_cast<AppContext *>(_instance->context());
-                                         if (context && context->queueMain)
-                                         {
-                                             static_cast<QueueMain *>(context->queueMain)->postEvent(EventSystem, SysSoftwareTimer, 0, id);
-                                         }
-                                     } }),
+                                        getInstance().postEvent(EventSystem, SysSoftwareTimer, 0, (uint32_t)xTimer);
+                                   }),
 #endif
                          _handlerMap()
 {
-    _instance = this;
-
     _handlerMap = {
-        __EVENT_MAP(QueueMain, EventSystem),
-        __EVENT_MAP(QueueMain, EventNull), // {EventNull, &QueueMain::handlerEventNull},
+        __EVENT_MAP(CLASSNAME, EventSystem),
+        __EVENT_MAP(CLASSNAME, EventNull), // {EventNull, &CLASSNAME::handlerEventNull},
     };
 }
 
-void QueueMain::start(void *ctx)
+void CLASSNAME::start(void *ctx)
 {
-#if defined ARDUPROF_FREERTOS && defined ARDUINO_ARCH_RP2040
+#if defined ARDUPROF_FREERTOS 
+#if defined ARDUINO_ARCH_RP2040
     LOG_TRACE("core", get_core_num(), ", uxTaskPriorityGet(NULL)=", uxTaskPriorityGet(NULL));
-#elif defined ARDUPROF_FREERTOS && defined ESP_PLATFORM
+#elif defined ARDUINO_ARCH_ESP32
+// #elif defined ARDUPROF_FREERTOS && defined ESP_PLATFORM
     LOG_TRACE("on core ", xPortGetCoreID(), ", xPortGetFreeHeapSize()=", xPortGetFreeHeapSize());
+#else    
+    LOG_TRACE("");
+#endif
 #elif defined ARDUPROF_MBED
     LOG_TRACE("Mbed OS thread started");
 #endif
@@ -133,7 +121,7 @@ void QueueMain::start(void *ctx)
     // vTaskDelay(pdMS_TO_TICKS(1000));
 }
 
-void QueueMain::onMessage(const Message &msg)
+void CLASSNAME::onMessage(const Message &msg)
 {
     auto func = _handlerMap[msg.event];
     if (func)
@@ -147,7 +135,7 @@ void QueueMain::onMessage(const Message &msg)
 }
 
 /////////////////////////////////////////////////////////////////////////////
-__EVENT_FUNC_DEFINITION(QueueMain, EventSystem, msg) // void QueueMain::handlerEventSystem(const Message &msg)
+__EVENT_FUNC_DEFINITION(CLASSNAME, EventSystem, msg) // void CLASSNAME::handlerEventSystem(const Message &msg)
 {
     // LOG_TRACE("EventSystem(", msg.event, "), iParam = ", msg.iParam, ", uParam = ", msg.uParam, ", lParam = ", msg.lParam);
     enum SystemTriggerSource src = static_cast<SystemTriggerSource>(msg.iParam);
@@ -166,12 +154,12 @@ __EVENT_FUNC_DEFINITION(QueueMain, EventSystem, msg) // void QueueMain::handlerE
 }
 
 // define EventNull handler
-__EVENT_FUNC_DEFINITION(QueueMain, EventNull, msg) // void QueueMain::handlerEventNull(const Message &msg)
+__EVENT_FUNC_DEFINITION(CLASSNAME, EventNull, msg) // void CLASSNAME::handlerEventNull(const Message &msg)
 {
     LOG_TRACE("EventNull(", msg.event, "), iParam=", msg.iParam, ", uParam=", msg.uParam, ", lParam=", msg.lParam);
 }
 /////////////////////////////////////////////////////////////////////////////
-void QueueMain::handlerSoftwareTimer(TimerHandle_t xTimer)
+void CLASSNAME::handlerSoftwareTimer(TimerHandle_t xTimer)
 {
     if (xTimer == _timer1Hz.timer())
     {
