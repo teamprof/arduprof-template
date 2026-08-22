@@ -35,3 +35,5 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // define application specific pins here, such as LED pin, button pin, etc.
+#define PIN_BOOT GPIO_NUM_9         // swBoot
+

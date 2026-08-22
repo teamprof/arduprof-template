@@ -21,8 +21,7 @@
 #include "DebounceTimer.h"
 #include "DebounceButton.h"
 
-#if 0
-// #if defined ARDUINO_ARCH_RP2040 
+#if defined ARDUPROF_FREERTOS 
 DebounceTimer *DebounceTimer::_instance = nullptr;
 
 bool DebounceTimer::attachButton(DebounceButton *button)

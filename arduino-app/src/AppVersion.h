@@ -21,12 +21,13 @@
 #include <stdint.h>
 
 /*
-    v0.2.0: revise getInstance() for thread-safe initialization in C++ 11+ 
-    v0.1.0: first release
+v0.3.0: add threadButton for single click/double click/long press of button BOOT
+v0.2.0: revise getInstance() for thread-safe initialization in C++ 11+ 
+v0.1.0: first release
 */
 
 #define MajorVer 0
-#define MinorVer 2
+#define MinorVer 3
 #define BuildVer 0
 
 class AppVersion

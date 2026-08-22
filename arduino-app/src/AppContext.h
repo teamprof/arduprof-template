@@ -29,6 +29,7 @@ namespace ardufreertos
 typedef struct _AppContext
 {
     ardufreertos::MessageQueue *queueMain;
+    ardufreertos::ThreadBase *threadButton;
     ardufreertos::ThreadBase *threadApp;
 } AppContext;
 

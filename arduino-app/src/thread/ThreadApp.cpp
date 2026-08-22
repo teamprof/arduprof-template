@@ -22,14 +22,25 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-#if defined ARDUPROF_FREERTOS && defined ARDUINO_ARCH_RP2040
-////////////////////////////////////////////////////////////////////////////////////////////
-// QueueMain for Pi Pico/Pico2 (RP2040/RP2350) FreeRTOS
-////////////////////////////////////////////////////////////////////////////////////////////
+#if defined ARDUPROF_FREERTOS
 
+#if defined ARDUINO_ARCH_RP2040
+////////////////////////////////////////////////////////////////////////////////////////////
+// Thread for Pi Pico/Pico2 (RP2040/RP2350) FreeRTOS
+////////////////////////////////////////////////////////////////////////////////////////////
 static constexpr UBaseType_t uxCoreAffinityMask = ((1 << 0)); // task only run on core 0
 // static constexpr UBaseType_t uxCoreAffinityMask = ((1 << 1)); // task only run on core 1
 // static constexpr uxCoreAffinityMask = ( ( 1 << 0 ) | ( 1 << 2 ) );  // e.g. task can only run on core 0 and core 2
+
+#elif defined ESP_PLATFORM
+////////////////////////////////////////////////////////////////////////////////////////////
+// Thread for ESP32
+////////////////////////////////////////////////////////////////////////////////////////////
+#define RUNNING_CORE ARDUINO_RUNNING_CORE
+// #define RUNNING_CORE 0 // dedicate core 0 for Thread
+// #define RUNNING_CORE 1 // dedicate core 1 for Thread
+
+#endif
 
 #define TASK_NAME STR(CLASSNAME)
 #define TASK_STACK_SIZE (4096 / sizeof(StackType_t))
@@ -65,6 +76,7 @@ void CLASSNAME::start(void *ctx)
 
     ThreadBase::start(ctx);
 
+#if defined ARDUINO_ARCH_RP2040
     _taskHandle = xTaskCreateStatic(
         [](void *instance)
         { static_cast<ThreadBase *>(instance)->run(); },
@@ -76,51 +88,16 @@ void CLASSNAME::start(void *ctx)
         &xTaskBuffer);
     configASSERT(_taskHandle);
     vTaskCoreAffinitySet(_taskHandle, uxCoreAffinityMask); // Set the core affinity mask for the task, i.e. set task on running core
-}
 
-#elif defined ARDUPROF_FREERTOS && defined ESP_PLATFORM
-////////////////////////////////////////////////////////////////////////////////////////////
-// Thread for ESP32
-////////////////////////////////////////////////////////////////////////////////////////////
-
-// #define RUNNING_CORE 0 // dedicate core 0 for Thread
-// #define RUNNING_CORE 1 // dedicate core 1 for Thread
-#define RUNNING_CORE ARDUINO_RUNNING_CORE
-
-#define TASK_NAME STR(CLASSNAME)
-#define TASK_STACK_SIZE (4096 / sizeof(StackType_t))
-#define TASK_PRIORITY 6   // Priority, (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
-#define TASK_QUEUE_SIZE 8 // message queue size for app task
-static_assert(TASK_PRIORITY <= configMAX_PRIORITIES, "TASK_PRIORITY exceeds configMAX_PRIORITIES");
-
-#define TASK_INIT_NAME "taskDelayInit"
-#define TASK_INIT_STACK_SIZE (4096 / sizeof(StackType_t))
-#define TASK_INIT_PRIORITY 0
-static_assert(TASK_INIT_PRIORITY <= configMAX_PRIORITIES, "TASK_INIT_PRIORITY exceeds configMAX_PRIORITIES");
-
-static uint8_t ucQueueStorageArea[TASK_QUEUE_SIZE * sizeof(Message)];
-static StaticQueue_t xStaticQueue;
-
-static StackType_t xStack[TASK_STACK_SIZE];
-static StaticTask_t xTaskBuffer;
-
-////////////////////////////////////////////////////////////////////////////////////////////
-
-void CLASSNAME::start(void *ctx)
-{
-    // LOG_TRACE("on core ", xPortGetCoreID(), ", xPortGetFreeHeapSize()=", xPortGetFreeHeapSize());
-    ThreadBase::start(ctx);
-
+#elif defined ESP_PLATFORM
     _taskHandle = xTaskCreateStaticPinnedToCore(
-        [](void *instance)
-        { static_cast<ThreadBase *>(instance)->run(); },
+        [](void *instance) { static_cast<ThreadBase *>(instance)->run(); },
         TASK_NAME,
-        TASK_STACK_SIZE, // This stack size can be checked & adjusted by reading the Stack Highwater
+        TASK_STACK_SIZE,    // This stack size can be checked & adjusted by reading the Stack Highwater
         this,
-        TASK_PRIORITY, // Priority, with 3 (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
-        xStack,
-        &xTaskBuffer,
-        RUNNING_CORE);
+        TASK_PRIORITY,      // Priority, with 3 (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
+        xStack, &xTaskBuffer, RUNNING_CORE);
+#endif
 }
 
 #elif defined ARDUPROF_MBED && defined ARDUINO_ARCH_MBED_RP2040

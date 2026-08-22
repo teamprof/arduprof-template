@@ -1,4 +1,4 @@
-/* Copyright 2026 teamprof.net@gmail.com
+/* Copyright 2025 teamprof.net@gmail.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this
  * software and associated documentation files (the "Software"), to deal in the Software
@@ -18,36 +18,32 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 #pragma once
-#include <Arduino.h>
+#include "./DebounceButton.h"
+#include "../pins.h"
 
-enum AppEvent : int16_t
+#ifdef GPIO_BUTTON
+#undef GPIO_BUTTON
+#endif
+
+/////////////////////////////////////////////////////////////
+// ButtonOnOff = ButtonBoot
+/////////////////////////////////////////////////////////////
+#define GPIO_BUTTON PIN_BOOT
+#define BUTTON_STATE_ACTIVE LOW
+
+class ButtonBoot : public DebounceButton
 {
-    /////////////////////////////////////////////////////////////////////////////
-    EventNull = 0,
-    EventGpioISR = 10, // iParam=pin, uParam=value, lParam=millis()
-    EventSystem,       // iParam=SystemTriggerSource
+public:
+    ButtonBoot(QueueHandle_t queue) : DebounceButton(GPIO_BUTTON, BUTTON_STATE_ACTIVE, INPUT, queue)
+    {
+        enableInterrupt(CHANGE);
+        // enableInterrupt(FALLING);
+    }
 
-    /////////////////////////////////////////////////////////////////////////////
-    EventApp = 100, // iParam=<AppTriggerSource>, uParam=<>
-
-    /////////////////////////////////////////////////////////////////////////////
+    ~ButtonBoot()
+    {
+        disableInterrupt();
+    }
 };
 
-enum SystemTriggerSource : int16_t
-{
-    SysInitDone = 0,
-    SysSoftwareTimer, // lParam=xTimer:uint32_t
-    SysVbusDetect,    // uParam=isVbusDetected:bool
-    SysLowBattery,
-    SysButtonClick,       // uParam=pin number
-    SysButtonDoubleClick, // uParam=pin number
-    SysButtonLongPress,   // uParam=pin number
-    SysSerial,            // lParam=ptr to Serial
-};
-
-enum AppTriggerSource : int16_t
-{
-    AppNull = 0,
-    AppButton, // uParam=SysButtonClick/SysButtonDoubleClick/SysButtonLongPress, lParam==pin number
-};
-
+#undef GPIO_BUTTON

@@ -21,6 +21,7 @@
 #include "./ArduProfApp.h"
 #include "./AppDef.h"
 #include "./AppContext.h"
+#include "./thread/ThreadButton.h"  
 #include "./thread/ThreadApp.h"
 #include "./thread/QueueMain.h"
 
@@ -29,6 +30,7 @@ AppContext &getAppContext(void)
 {
     static AppContext instance = {  // Guaranteed thread-safe initialization in C++ 11+
         .queueMain = &QueueMain::getInstance(),
+        .threadButton = &ThreadButton::getInstance(),
         .threadApp = &ThreadApp::getInstance(),
     }; 
     return instance;

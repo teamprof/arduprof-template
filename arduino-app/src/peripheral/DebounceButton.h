@@ -19,13 +19,13 @@
  */
 #pragma once
 #include <Arduino.h>
+#include <FunctionalInterrupt.h>
 #include "../ArduProfApp.h"
 #include "../AppEvent.h"
 #include "./DebounceDef.h"
 #include "./DebounceTimer.h"
 
-#if 0
-// #if defined ARDUINO_ARCH_RP2040 
+#if defined ARDUPROF_FREERTOS 
 class DebounceTimer;
 
 class DebounceButton : public ardufreertos::MessageQueue
@@ -69,6 +69,16 @@ public:
         return true;
     }
 
+#if defined ARDUINO_ARCH_ESP32
+    void enableInterrupt(uint8_t intrMode)
+    {
+        if (!isIntrEnable)
+        {
+            attachInterrupt(digitalPinToInterrupt(_PIN), std::bind(&DebounceButton::isr, this), intrMode);
+            isIntrEnable = true;
+        }
+    }
+#elif defined ARDUINO_RASPBERRY_PI_PICO_2 || defined ARDUINO_RASPBERRY_PI_PICO
     void enableInterrupt(PinStatus intrMode)
     {
         if (!isIntrEnable)
@@ -77,6 +87,7 @@ public:
             isIntrEnable = true;
         }
     }
+#endif
 
     void disableInterrupt(void)
     {

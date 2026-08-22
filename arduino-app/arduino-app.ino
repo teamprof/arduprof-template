@@ -68,6 +68,15 @@ static void startTasks(void)
     } else {
         LOG_DEBUG("ctx.threadApp is NULL");
     }
+
+    if (ctx.threadButton) 
+    {
+        ctx.threadButton->start(&ctx);
+    } 
+    else 
+    {
+        LOG_DEBUG("ctx.threadButton is NULL");
+    }
 }
 
 // set debug port to USB/CDC if USB/CDC is found without INIT_DEBUG_PORT_TIMEOUT

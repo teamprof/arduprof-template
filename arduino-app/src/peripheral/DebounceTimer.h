@@ -21,13 +21,11 @@
 #include "../ArduProfApp.h"
 #include "./DebounceDef.h"
 
-#define ButtonListSize 10
+#define ButtonListSize 8   // max number of buttons
 
-#if 0
-// #if defined ARDUINO_RASPBERRY_PI_PICO || ARDUINO_RASPBERRY_PI_PICO_2 
-// #if defined ARDUINO_ARCH_RP2040 
 class DebounceButton;
 
+#if defined ARDUPROF_FREERTOS 
 class DebounceTimer : public ardufreertos::SoftwareTimer, ardufreertos::MessageQueue
 {
 public:
@@ -75,3 +73,4 @@ private:
     int _paramValue;
 };
 #endif
+
