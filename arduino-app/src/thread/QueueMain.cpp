@@ -167,6 +167,6 @@ void CLASSNAME::handlerSoftwareTimer(TimerHandle_t xTimer)
     }
     else
     {
-        LOG_TRACE("unsupported timer handle=0x%04x", (uint32_t)(xTimer));
+        LOG_WARN("unsupported timer handle=(hex)", DebugLogBase::HEX, (uint32_t)(xTimer));
     }
 }
