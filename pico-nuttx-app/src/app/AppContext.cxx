@@ -22,18 +22,13 @@
 #include "./thread/QueueMain.h"
 #include "./thread/ThreadApp.h"
 
-AppContext *get_context(void)
+AppContext &get_context(void)
 {
-    static AppContext *_instance = nullptr;
-    if (!_instance)
-    {
-        static AppContext instance = {
-            // .queueMain = nullptr,
-            .queueMain = QueueMain::getInstance(),
-            // .threadApp = nullptr,
-            .threadApp = ThreadApp::getInstance(),
-        };
-        _instance = &instance;
-    }
-    return _instance;
+    static AppContext instance = {
+        // .queueMain = nullptr,
+        .queueMain = &QueueMain::getInstance(),
+        // .threadApp = nullptr,
+        .threadApp = &ThreadApp::getInstance(),
+    };
+    return instance;
 }

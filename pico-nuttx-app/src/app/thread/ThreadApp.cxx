@@ -51,9 +51,6 @@ static uint8_t _queueBuffer[TASK_QUEUE_SIZE] __attribute__((aligned(4)));
 static void *_queuePointerArray[TASK_QUEUE_LENGTH];  
 
 ///////////////////////////////////////////////////////////////////////
-CLASSNAME *CLASSNAME::_instance = NULL;
-
-///////////////////////////////////////////////////////////////////////
 CLASSNAME::CLASSNAME() : nuttxos::ThreadBase(CORE, TASK_STACK_SIZE, TASK_PRIORITY,
                                              _queueBuffer, TASK_QUEUE_SIZE, _queuePointerArray, TASK_QUEUE_LENGTH),
                          _timer1Hz(
@@ -70,25 +67,14 @@ CLASSNAME::CLASSNAME() : nuttxos::ThreadBase(CORE, TASK_STACK_SIZE, TASK_PRIORIT
                              },
                              [](timer_t timer_id)
                              {
-                                 auto instance = CLASSNAME::getInstance();
-                                 instance->postEvent(EventSystem, SysSoftwareTimer, 0, (uint32_t)(timer_id));
-                                 //
+                                getInstance().postEvent(EventSystem, SysSoftwareTimer, 0, (uint32_t)timer_id);
+                                //
                              })
 {
     _handlerMap = {
         __EVENT_MAP(CLASSNAME, EventSystem),
         __EVENT_MAP(CLASSNAME, EventNull),  // {EventNull, &ThreadSlave::handlerEventNull},
     };
-}
-
-CLASSNAME *CLASSNAME::getInstance(void)
-{
-    if (!_instance)
-    {
-        static CLASSNAME instance;
-        _instance = &instance;
-    }
-    return _instance;
 }
 
 void CLASSNAME::start(void *ctx)
@@ -126,8 +112,7 @@ __EVENT_FUNC_DEFINITION(CLASSNAME, EventSystem, msg)
 {
     syslog(LOG_DEBUG, STR(CLASSNAME) ": EventSystem(%hd), iParam=%hd, uParam=%hu, lParam=0x%08lx",
            msg.event, msg.iParam, msg.uParam, msg.lParam);
-    enum SystemTriggerSource src =
-        static_cast<enum SystemTriggerSource>(msg.iParam);
+    enum SystemTriggerSource src = static_cast<enum SystemTriggerSource>(msg.iParam);
     switch (src)
     {
     case SysSoftwareTimer:

@@ -52,7 +52,7 @@ static void *_queuePointerArray[TASK_QUEUE_LENGTH] __attribute__((uninitialized)
 
 
 ///////////////////////////////////////////////////////////////////////
-CLASSNAME *CLASSNAME::_instance = nullptr;
+// CLASSNAME *CLASSNAME::_instance = nullptr;
 
 ///////////////////////////////////////////////////////////////////////
 CLASSNAME::CLASSNAME() : nuttxos::MessageBus(_queueBuffer, TASK_QUEUE_SIZE, _queuePointerArray, TASK_QUEUE_LENGTH),
@@ -66,13 +66,11 @@ CLASSNAME::CLASSNAME() : nuttxos::MessageBus(_queueBuffer, TASK_QUEUE_SIZE, _que
                                      .tv_sec = 1,
                                      .tv_nsec = 0,
                                  },
-
                              },
                              [](timer_t timer_id)
                              {
-                                 auto instance = CLASSNAME::getInstance();
-                                 instance->postEvent(EventSystem, SysSoftwareTimer, 0, (uint32_t)(timer_id));
-                                 //
+                                getInstance().postEvent(EventSystem, SysSoftwareTimer, 0, (uint32_t)timer_id);
+                                //
                              }),
                          _ledState(false)
 {
@@ -80,16 +78,6 @@ CLASSNAME::CLASSNAME() : nuttxos::MessageBus(_queueBuffer, TASK_QUEUE_SIZE, _que
         __EVENT_MAP(CLASSNAME, EventSystem),
         __EVENT_MAP(CLASSNAME, EventNull),  // {EventNull, &QueueMain::handlerEventNull},
     };
-}
-
-CLASSNAME *QueueMain::getInstance(void)
-{
-    if (!_instance)
-    {
-        static CLASSNAME instance;
-        _instance = &instance;
-    }
-    return _instance;
 }
 
 void CLASSNAME::start(void *ctx)
@@ -193,7 +181,13 @@ void CLASSNAME::printChipInfo(void)
            CONFIG_ARCH_CHIP,
            (revision == 1) ? "B0" : "A1/A2",
            (unsigned int)chip_id);
-    syslog(LOG_INFO, "Board:         %s\n", CONFIG_ARCH_BOARD);
+    syslog(LOG_INFO, "Board:         %s\n", 
+#ifdef CONFIG_ARCH_BOARD 
+        CONFIG_ARCH_BOARD
+#elif defined CONFIG_ARCH_BOARD_CUSTOM_NAME
+        CONFIG_ARCH_BOARD_CUSTOM_NAME
+#endif
+    );
 
 #ifdef CONFIG_SMP
     syslog(LOG_INFO, "SMP Status:    Enabled, Cores=%d\n", CONFIG_SMP_NCPUS);
@@ -214,7 +208,7 @@ void CLASSNAME::printChipInfo(void)
         syslog(LOG_INFO, "Buffer RAM:    %lu bytes\n", (unsigned long)mem_info.bufferram);
     }
 
-    // 4. Detailed Heap Contiguity Breakdown (If allocator metrics are enabled)
+    // Detailed Heap Contiguity Breakdown (If allocator metrics are enabled)
 #ifdef CONFIG_MM_REGIONS
     struct mallinfo mem_details = mallinfo();
     syslog(LOG_INFO, "Max Alloc Block: %d bytes (Largest continuous chunk)\n", mem_details.mxordblk);

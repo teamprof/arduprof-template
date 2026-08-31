@@ -56,5 +56,7 @@
 #define NAMESPACE ardufreertos
 #elif defined ARDUPROF_MBED
 #define NAMESPACE ardumbedos
+#elif defined ARDUPROF_NUTTX
+#define NAMESPACE nuttxos
 #endif
 

@@ -26,7 +26,7 @@
 #include "./ArduProfApp.h"
 
 #define MajorVer 0
-#define MinorVer 1
+#define MinorVer 2
 #define BuildVer 0
 
 class AppVersion

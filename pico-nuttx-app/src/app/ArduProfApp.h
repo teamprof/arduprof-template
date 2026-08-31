@@ -57,3 +57,14 @@
 ///////////////////////////////////////////////////////////////////////////////
 #define ARDUPROF_NUTTX
 #include "../lib/arduprof/src/ArduProf.h"
+
+
+///////////////////////////////////////////////////////////////////////////////
+#undef NAMESPACE
+#if defined ARDUPROF_FREERTOS
+#define NAMESPACE ardufreertos
+#elif defined ARDUPROF_MBED
+#define NAMESPACE ardumbedos
+#elif defined ARDUPROF_NUTTX
+#define NAMESPACE nuttxos
+#endif

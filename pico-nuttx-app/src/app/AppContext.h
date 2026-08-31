@@ -34,4 +34,4 @@ typedef struct _AppContext
     nuttxos::ThreadBase *threadApp;
 } AppContext;
 
-AppContext *get_context(void);
+AppContext &get_context(void);

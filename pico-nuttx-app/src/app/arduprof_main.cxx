@@ -41,27 +41,30 @@ int main(int argc, FAR char *argv[])
     setlogmask(LOG_UPTO(LOG_DEBUG));
 
 
-    auto ctx = get_context();
-    if (ctx->threadApp)
+    auto& ctx = get_context();
+    auto queueMain = static_cast<QueueMain *>(ctx.queueMain);
+    if (queueMain)
     {
-        ctx->threadApp->start(ctx);
+        queueMain->start(&ctx);
+    }
+    else
+    {
+        syslog(LOG_ERR, "No queueMain in context");
+    }    
+    if (ctx.threadApp)
+    {
+        ctx.threadApp->start(&ctx);
     }
     else
     {
         syslog(LOG_ERR, "No threadApp in context");
     }
 
-    if (ctx->queueMain)
+    if (queueMain)
     {
-        auto queueMain = static_cast<QueueMain *>(ctx->queueMain);
-        queueMain->start(ctx);
         queueMain->postEvent(EventNull);
         // queueMain->messageLoop(MSEC2TICK(0));
         queueMain->messageLoopForever();
-    }
-    else
-    {
-        syslog(LOG_ERR, "No queueMain in context");
     }
 
     return EXIT_SUCCESS;

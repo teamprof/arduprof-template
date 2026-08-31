@@ -32,7 +32,14 @@
 class CLASSNAME : public nuttxos::ThreadBase
 {
 public:
-    static CLASSNAME *getInstance(void);
+    CLASSNAME(const CLASSNAME&) = delete;
+    CLASSNAME& operator=(const CLASSNAME&) = delete;
+    static CLASSNAME& getInstance() 
+    {
+        static CLASSNAME instance; // Guaranteed thread-safe initialization in C++ 11+
+        return instance;
+    }
+
     virtual void start(void *);
     virtual void onMessage(const Message &msg);
     virtual void setup(void);
@@ -45,8 +52,7 @@ protected:
 
 private:
     CLASSNAME();
-    static CLASSNAME *_instance;
-    nuttxos::PeriodicTimer _timer1Hz;
+    NAMESPACE::PeriodicTimer _timer1Hz;
 
     void handlerSoftwareTimer(timer_t timerid);
 
