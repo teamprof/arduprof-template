@@ -13,3 +13,6 @@
 [submodule "pico-nuttx-app/src/lib/arduprof"]
 	path = pico-nuttx-app/src/lib/arduprof
 	url = https://github.com/teamprof/arduprof.git
+[submodule "esp-idf-app/main/lib/arduprof"]
+	path = esp-idf-app/main/lib/arduprof
+	url = https://github.com/teamprof/arduprof.git
