@@ -1,0 +1,15 @@
+{
+  "idf.currentSetup": "/home/teamprof/.espressif/v5.5.3/esp-idf",
+  "idf.openOcdConfigs": [
+    "board/esp32s3-builtin.cfg"
+  ],
+  "idf.customExtraVars": {
+    "IDF_TARGET": "esp32s3",
+    "OPENOCD_SCRIPTS": "/home/teamprof/.espressif/tools/openocd-esp32/v0.12.0-esp32-20251215/openocd-esp32/share/openocd/scripts",
+    "OPENOCD_BIN": "/home/teamprof/.espressif/tools/openocd-esp32/v0.12.0-esp32-20251215/openocd-esp32/bin/openocd"
+  },
+  "idf.customExtraPaths": "/home/teamprof/.espressif/tools/openocd-esp32/v0.12.0-esp32-20251215/openocd-esp32/bin",
+  "idf.toolsPath": "/home/teamprof/.espressif",
+  "idf.flashType": "UART",
+  "idf.port": "/dev/ttyACM0"
+}

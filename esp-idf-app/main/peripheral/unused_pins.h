@@ -19,27 +19,6 @@
  */
 #pragma once
 
-#ifndef UNUSED_ATTR
-#define UNUSED_ATTR __attribute__((unused))
-#endif
-
-#ifndef __ALIGNED
-#define __ALIGNED(x) __attribute__((aligned(x)))
-#endif
-
-#ifndef ML_DATA
-#define ML_DATA __attribute__((section(".ml_data")))
-#endif
-
-
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
-#ifdef __cplusplus
-}
-#endif
-
-
+namespace unused_pins {
+    void setup(void);
+};

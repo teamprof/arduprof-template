@@ -18,28 +18,36 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 #pragma once
+#include <stdint.h>
 
-#ifndef UNUSED_ATTR
-#define UNUSED_ATTR __attribute__((unused))
-#endif
-
-#ifndef __ALIGNED
-#define __ALIGNED(x) __attribute__((aligned(x)))
-#endif
-
-#ifndef ML_DATA
-#define ML_DATA __attribute__((section(".ml_data")))
-#endif
-
-
-
-#ifdef __cplusplus
-extern "C"
+enum AppEvent : int16_t
 {
-#endif
+    /////////////////////////////////////////////////////////////////////////////
+    EventNull = 0,
+    EventGpioISR = 10, // iParam=pin, uParam=value, lParam=millis()
+    EventSystem,       // iParam=SystemTriggerSource
 
-#ifdef __cplusplus
-}
-#endif
+    /////////////////////////////////////////////////////////////////////////////
+    EventApp = 100, // iParam=<AppTriggerSource>, uParam=<>
 
+    /////////////////////////////////////////////////////////////////////////////
+};
+
+enum SystemTriggerSource : int16_t
+{
+    SysInitDone = 0,
+    SysSoftwareTimer, // lParam=xTimer:uint32_t
+    SysVbusDetect,    // uParam=isVbusDetected:bool
+    SysLowBattery,
+    SysButtonClick,       // uParam=pin number
+    SysButtonDoubleClick, // uParam=pin number
+    SysButtonLongPress,   // uParam=pin number
+    SysSerial,            // lParam=ptr to Serial
+};
+
+enum AppTriggerSource : int16_t
+{
+    AppNull = 0,
+    AppButton, // uParam=SysButtonClick/SysButtonDoubleClick/SysButtonLongPress, lParam==pin number
+};
 

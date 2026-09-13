@@ -17,29 +17,28 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-#pragma once
 
-#ifndef UNUSED_ATTR
-#define UNUSED_ATTR __attribute__((unused))
+#if defined(ARDUINO)
+#include <Arduino.h>
 #endif
 
-#ifndef __ALIGNED
-#define __ALIGNED(x) __attribute__((aligned(x)))
-#endif
+#include "./ArduProfApp.h"
+#include "./AppDef.h"
+#include "./AppContext.h"
+#include "./thread/ThreadButton.h"  
+#include "./thread/ThreadApp.h"
+#include "./thread/QueueMain.h"
 
-#ifndef ML_DATA
-#define ML_DATA __attribute__((section(".ml_data")))
-#endif
-
-
-
-#ifdef __cplusplus
-extern "C"
+///////////////////////////////////////////////////////////////////////////////
+AppContext &getAppContext(void)
 {
-#endif
-
-#ifdef __cplusplus
+    static AppContext instance = {  // Guaranteed thread-safe initialization in C++ 11+
+        .queueMain = &QueueMain::getInstance(),
+        .threadButton = &ThreadButton::getInstance(),
+        .threadApp = &ThreadApp::getInstance(),
+    };
+    // instance.queueMain = nullptr;
+    // instance.threadButton = nullptr;
+    // instance.threadApp = nullptr;
+    return instance;
 }
-#endif
-
-

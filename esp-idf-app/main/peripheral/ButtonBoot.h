@@ -1,4 +1,4 @@
-/* Copyright 2026 teamprof.net@gmail.com
+/* Copyright 2025 teamprof.net@gmail.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this
  * software and associated documentation files (the "Software"), to deal in the Software
@@ -18,28 +18,40 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 #pragma once
+#include "./DebounceButton.h"
+#include "../pins.h"
 
-#ifndef UNUSED_ATTR
-#define UNUSED_ATTR __attribute__((unused))
+#ifdef GPIO_BUTTON
+#undef GPIO_BUTTON
 #endif
 
-#ifndef __ALIGNED
-#define __ALIGNED(x) __attribute__((aligned(x)))
-#endif
+/////////////////////////////////////////////////////////////
+// ButtonOnOff = ButtonBoot
+/////////////////////////////////////////////////////////////
+#define GPIO_BUTTON PIN_BOOT
+#define BUTTON_STATE_ACTIVE LOW
 
-#ifndef ML_DATA
-#define ML_DATA __attribute__((section(".ml_data")))
-#endif
-
-
-
-#ifdef __cplusplus
-extern "C"
+class ButtonBoot : public DebounceButton
 {
+public:
+
+#ifdef ARDUINO
+    ButtonBoot(QueueHandle_t queue) : DebounceButton(GPIO_BUTTON, BUTTON_STATE_ACTIVE, INPUT, queue)
+    {
+        enableInterrupt(CHANGE);
+        // enableInterrupt(FALLING);
+    }
+#elif defined ESP_PLATFORM
+    ButtonBoot(QueueHandle_t queue) : DebounceButton(GPIO_BUTTON, 0, GPIO_MODE_INPUT, queue)
+    {
+        enableInterrupt(GPIO_INTR_ANYEDGE);
+    }
 #endif
 
-#ifdef __cplusplus
-}
-#endif
+    ~ButtonBoot()
+    {
+        disableInterrupt();
+    }
+};
 
-
+#undef GPIO_BUTTON

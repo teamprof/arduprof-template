@@ -19,27 +19,52 @@
  */
 #pragma once
 
-#ifndef UNUSED_ATTR
-#define UNUSED_ATTR __attribute__((unused))
-#endif
+#include "ArduProfApp.h"
 
-#ifndef __ALIGNED
-#define __ALIGNED(x) __attribute__((aligned(x)))
-#endif
-
-#ifndef ML_DATA
-#define ML_DATA __attribute__((section(".ml_data")))
-#endif
-
-
-
-#ifdef __cplusplus
-extern "C"
+namespace NAMESPACE
 {
-#endif
+    class MessageQueue;
+    class ThreadBase;
+};
 
-#ifdef __cplusplus
-}
-#endif
+typedef struct _AppContext
+{
+    NAMESPACE::MessageQueue *queueMain;
+    NAMESPACE::ThreadBase *threadButton;
+    NAMESPACE::ThreadBase *threadApp;
+} AppContext;
 
 
+// #if defined ARDUPROF_FREERTOS
+// namespace ardufreertos
+// {
+//     class MessageQueue;
+//     class ThreadBase;
+// };
+
+// typedef struct _AppContext
+// {
+//     ardufreertos::MessageQueue *queueMain;
+//     ardufreertos::ThreadBase *threadButton;
+//     ardufreertos::ThreadBase *threadApp;
+//     ardufreertos::ThreadBase *threadNet;
+//     // ardufreertos::ThreadBase *threadMl;
+//     ardufreertos::ThreadBase *threadMic;
+// } AppContext;
+
+// #elif defined ARDUPROF_MBED
+// namespace ardumbedos
+// {
+//     class MessageQueue;
+//     class ThreadBase;
+// };
+
+// typedef struct _AppContext
+// {
+//     ardumbedos::MessageQueue *queueMain;
+//     ardumbedos::ThreadBase *threadApp;
+// } AppContext;
+
+// #endif
+
+extern AppContext &getAppContext(void);

@@ -28,7 +28,8 @@
 #endif
 
 #ifndef ML_DATA
-#define ML_DATA __attribute__((section(".ml_data")))
+#define ML_DATA 
+// #define ML_DATA __attribute__((section(".ml_data")))
 #endif
 
 
@@ -41,5 +42,4 @@ extern "C"
 #ifdef __cplusplus
 }
 #endif
-
 

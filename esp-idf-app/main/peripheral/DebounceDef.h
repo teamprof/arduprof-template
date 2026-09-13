@@ -1,4 +1,4 @@
-/* Copyright 2026 teamprof.net@gmail.com
+/* Copyright 2025 teamprof.net@gmail.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this
  * software and associated documentation files (the "Software"), to deal in the Software
@@ -19,27 +19,14 @@
  */
 #pragma once
 
-#ifndef UNUSED_ATTR
-#define UNUSED_ATTR __attribute__((unused))
-#endif
+// Button debounce time
+#define DebounceDuration pdMS_TO_TICKS(20) // 20ms
 
-#ifndef __ALIGNED
-#define __ALIGNED(x) __attribute__((aligned(x)))
-#endif
+// Button double click time
+#define DoubleClickDuration pdMS_TO_TICKS(500) // 500ms
 
-#ifndef ML_DATA
-#define ML_DATA __attribute__((section(".ml_data")))
-#endif
+// Button long press time
+#define LongPressDuration pdMS_TO_TICKS(3000) // 3s
 
-
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
-#ifdef __cplusplus
-}
-#endif
-
-
+// Interval of debounce timer interrupt
+#define DebounceTimerInterval pdMS_TO_TICKS(10)

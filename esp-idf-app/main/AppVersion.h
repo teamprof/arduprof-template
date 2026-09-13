@@ -18,28 +18,26 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 #pragma once
+#include <stdint.h>
 
-#ifndef UNUSED_ATTR
-#define UNUSED_ATTR __attribute__((unused))
-#endif
+/*
+v0.1.0: first release
+*/
 
-#ifndef __ALIGNED
-#define __ALIGNED(x) __attribute__((aligned(x)))
-#endif
+#define MajorVer 0
+#define MinorVer 1
+#define BuildVer 0
 
-#ifndef ML_DATA
-#define ML_DATA __attribute__((section(".ml_data")))
-#endif
-
-
-
-#ifdef __cplusplus
-extern "C"
+class AppVersion
 {
-#endif
+public:
+    static uint32_t getFirmwareVersion(void)
+    {
+        return (MajorVer << 24) | (MinorVer << 16) | (BuildVer);
+    }
 
-#ifdef __cplusplus
-}
-#endif
-
-
+    static const char *getFirmwareVersionString(void)
+    {
+        return STR(MajorVer) "." STR(MinorVer) "." STR(BuildVer);
+    }
+};

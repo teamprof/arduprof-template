@@ -19,27 +19,33 @@
  */
 #pragma once
 
-#ifndef UNUSED_ATTR
-#define UNUSED_ATTR __attribute__((unused))
+#ifdef ARDUINO
+#include "Arduino.h"
 #endif
 
-#ifndef __ALIGNED
-#define __ALIGNED(x) __attribute__((aligned(x)))
+// #define RAK3112_LORA_AUDIO
+#define ESP32S3_DEVKITC_1
+
+
+// #if defined ARDUINO_ESP32_DEV
+// #define LED_BUILTIN 2 // for ESP32, the on-board LED is connected to GPIO2
+// #pragma message "LED_BUILTIN is not defined, define it as 2 for ESP32"
+// // #elif defined ARDUINO_XIAO_ESP32C3
+// // #define LED_BUILTIN 10 // for XIAO ESP32C3, the on-board LED is connected to GPIO10
+// // #pragma message "LED_BUILTIN is not defined, define it as 10 for XIAO ESP32C3"
+// #endif
+
+///////////////////////////////////////////////////////////////////////////////
+// define application specific pins here, such as LED pin, button pin, etc.
+#if defined(ESP32S3_DEVKITC_1)
+#undef LED_BUILTIN                  // no on-board led on ESP32S3-DevKitC-1
+#define PIN_BOOT GPIO_NUM_0         // swBoot
+
+#define PIN_WS2812 GPIO_NUM_48      // on-board WS2812 on ESP32S3-KevKitC-1
+
+
+#elif defined(RAK3112_LORA_AUDIO)
+#define PIN_BOOT GPIO_NUM_0         // swBoot
+
 #endif
-
-#ifndef ML_DATA
-#define ML_DATA __attribute__((section(".ml_data")))
-#endif
-
-
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
-#ifdef __cplusplus
-}
-#endif
-
 

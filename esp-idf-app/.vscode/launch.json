@@ -1,0 +1,19 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "ESP-IDF Built-in USB Debug",
+      "type": "gdbtarget",
+      "request": "attach",
+      "program": "${workspaceFolder}/build/${command:espIdf.getProjectName}.elf",
+      "gdb": "${command:espIdf.getToolchainGdb}",
+      "initCommands": [
+        "set remote hardware-watchpoint-limit 2",
+        "mon reset halt",
+        "maintenance flush register-cache",
+        "thb app_main"
+      ],
+      "internalConsoleOptions": "openOnSessionStart"
+    }
+  ]
+}
