@@ -145,13 +145,13 @@ CLASSNAME::CLASSNAME() :
                          ardumbedos::ThreadBase(&threadQueue),
                         //  ardumbedos::ThreadBase(THREAD_QUEUE_SIZE),  // threadQueue is dynamically allocate from heap
                         _handlerMap(),
-                         _timer1Hz(queue(), 1000ms, [](int id)
+                        _timer1Hz(queue(), 1000ms, [](int id)
                                    {
                                         getInstance().postEvent(EventSystem, SysSoftwareTimer, 0, (uint32_t)xTimer);
                                    }),
 #endif
 #if defined LED_BUILTIN
-                         _ledBuildin(),
+                        _ledBuildin()
 #endif
 {
     _handlerMap = {
@@ -168,7 +168,6 @@ void CLASSNAME::setup(void)
 #if defined ARDUINO_ARCH_RP2040
     LOG_TRACE("core", get_core_num(), ", uxTaskPriorityGet(NULL)=", uxTaskPriorityGet(NULL));
 #elif defined ARDUINO_ARCH_ESP32
-// #elif defined ARDUPROF_FREERTOS && defined ESP_PLATFORM
     LOG_TRACE("on core ", xPortGetCoreID(), ", xPortGetFreeHeapSize()=", xPortGetFreeHeapSize());
 #elif defined ESP_PLATFORM
     ESP_LOGV(TAG, "on core %d, priority=%d, xPortGetFreeHeapSize()=%u", xPortGetCoreID(), (int)uxTaskPriorityGet(NULL), xPortGetFreeHeapSize());

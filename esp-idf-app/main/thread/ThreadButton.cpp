@@ -56,8 +56,8 @@ static constexpr UBaseType_t uxCoreAffinityMask = ((1 << 0));           // task 
 
 
 #define TASK_NAME STR(CLASSNAME)
-#define TASK_STACK_SIZE (2048 / sizeof(StackType_t))
-// #define TASK_STACK_SIZE (3192 / sizeof(StackType_t)) // with debug log in start() and setup()
+#define TASK_STACK_SIZE (3192 / sizeof(StackType_t)) // with debug log 
+// #define TASK_STACK_SIZE (2048 / sizeof(StackType_t))
 // #define TASK_STACK_SIZE (1024 / sizeof(StackType_t))
 #define TASK_PRIORITY 12    // Priority, (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
 #define TASK_QUEUE_SIZE 8   // message queue size for app task

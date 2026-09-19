@@ -22,7 +22,7 @@
 
 #include "../ArduProfApp.h"
 #include "../AppEvent.h"
-// #include "../peripheral/LedBuildin.h"
+#include "../peripheral/LedBuildin.h"
 
 #undef CLASSNAME
 #define CLASSNAME ThreadApp

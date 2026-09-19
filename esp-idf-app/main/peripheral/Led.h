@@ -1,4 +1,4 @@
-/* Copyright 2025 teamprof.net@gmail.com
+/* Copyright 2026 teamprof.net@gmail.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this
  * software and associated documentation files (the "Software"), to deal in the Software
@@ -18,40 +18,23 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 #pragma once
-#include "./DebounceButton.h"
-#include "../pins.h"
+#include "../ArduProfApp.h"
 
-#ifdef GPIO_BUTTON
-#undef GPIO_BUTTON
-#endif
-
-/////////////////////////////////////////////////////////////
-// ButtonOnOff = ButtonBoot
-/////////////////////////////////////////////////////////////
-#define GPIO_BUTTON PIN_BOOT
-#define BUTTON_STATE_ACTIVE LOW
-
-class ButtonBoot : public DebounceButton
+class Led : public Gpio
 {
 public:
-
-#ifdef ARDUINO
-    ButtonBoot(QueueHandle_t queue) : DebounceButton(GPIO_BUTTON, BUTTON_STATE_ACTIVE, INPUT, queue)
-    {
-        enableInterrupt(CHANGE);
-        // enableInterrupt(FALLING);
-    }
+#if defined ARDUINO_ARCH_RP2040 || defined ARDUINO_ARCH_MBED_RP2040
+    Led(uint8_t pin, uint8_t valueOn = LOW, PinMode mode = OUTPUT);
 #elif defined ESP_PLATFORM
-    ButtonBoot(QueueHandle_t queue) : DebounceButton(GPIO_BUTTON, LOW, GPIO_MODE_INPUT, queue)
-    {
-        enableInterrupt(GPIO_INTR_ANYEDGE);
-    }
+    Led(gpio_num_t pin, uint32_t valueOn = LOW, gpio_mode_t mode = GPIO_MODE_OUTPUT);
 #endif
 
-    ~ButtonBoot()
-    {
-        disableInterrupt();
-    }
-};
+    virtual void on(void);
+    virtual void off(void);
+    void toggle(void);
 
-#undef GPIO_BUTTON
+protected:
+    const uint8_t valueOn;
+
+    uint8_t stateOnOff;
+};

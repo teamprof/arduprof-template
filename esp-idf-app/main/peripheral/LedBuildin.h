@@ -1,4 +1,4 @@
-/* Copyright 2025 teamprof.net@gmail.com
+/* Copyright 2026 teamprof.net@gmail.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this
  * software and associated documentation files (the "Software"), to deal in the Software
@@ -18,40 +18,33 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 #pragma once
-#include "./DebounceButton.h"
 #include "../pins.h"
 
-#ifdef GPIO_BUTTON
-#undef GPIO_BUTTON
+#if defined LED_BUILTIN
+#include "./Led.h"
+
+#ifdef GPIO_LED
+#undef GPIO_LED
 #endif
 
-/////////////////////////////////////////////////////////////
-// ButtonOnOff = ButtonBoot
-/////////////////////////////////////////////////////////////
-#define GPIO_BUTTON PIN_BOOT
-#define BUTTON_STATE_ACTIVE LOW
+#ifdef ESP_PLATFORM
+#define GPIO_LED (gpio_num_t)(LED_BUILTIN)
+#else
+#define GPIO_LED (LED_BUILTIN)
+#endif
 
-class ButtonBoot : public DebounceButton
+class LedBuildin : public Led
 {
 public:
-
-#ifdef ARDUINO
-    ButtonBoot(QueueHandle_t queue) : DebounceButton(GPIO_BUTTON, BUTTON_STATE_ACTIVE, INPUT, queue)
+    LedBuildin() : Led(GPIO_LED, HIGH)
     {
-        enableInterrupt(CHANGE);
-        // enableInterrupt(FALLING);
     }
-#elif defined ESP_PLATFORM
-    ButtonBoot(QueueHandle_t queue) : DebounceButton(GPIO_BUTTON, LOW, GPIO_MODE_INPUT, queue)
-    {
-        enableInterrupt(GPIO_INTR_ANYEDGE);
-    }
-#endif
 
-    ~ButtonBoot()
+    ~LedBuildin()
     {
-        disableInterrupt();
     }
 };
 
-#undef GPIO_BUTTON
+#undef GPIO_LED
+
+#endif
