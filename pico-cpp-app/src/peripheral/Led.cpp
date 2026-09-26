@@ -1,0 +1,60 @@
+/* Copyright 2026 teamprof.net@gmail.com
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this
+ * software and associated documentation files (the "Software"), to deal in the Software
+ * without restriction, including without limitation the rights to use, copy, modify,
+ * merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to the following
+ * conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+ * PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+#include <algorithm>
+#include "./Led.h"
+
+#ifndef __min
+#define __min(x, y) ((x) < (y) ? (x) : (y))
+#endif
+
+#if defined ARDUINO_ARCH_RP2040 || defined ARDUINO_ARCH_MBED_RP2040
+Led::Led(uint8_t pin,
+         uint8_t valueOn,
+         PinMode mode) : Gpio(pin, mode), valueOn(valueOn) //, timer()
+#elif defined ARDUPROF_PICO_C
+Led::Led(uint8_t pin, 
+        uint8_t valueOn, 
+        bool output) : Gpio(pin, output), valueOn(valueOn)        
+#elif defined ESP_PLATFORM
+Led::Led(gpio_num_t pin,
+         uint32_t valueOn,
+         gpio_mode_t mode) : Gpio(pin, mode), valueOn(valueOn) //, timer()
+#endif
+{
+    off();
+    // on();
+}
+
+void Led::on(void)
+{
+    write(valueOn);
+    stateOnOff = valueOn;
+}
+
+void Led::off(void)
+{
+    write(!valueOn);
+    stateOnOff = !valueOn;
+}
+
+void Led::toggle(void)
+{
+    write(!_value);
+}

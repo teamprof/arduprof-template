@@ -1,0 +1,46 @@
+/* Copyright 2026 teamprof.net@gmail.com
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this
+ * software and associated documentation files (the "Software"), to deal in the Software
+ * without restriction, including without limitation the rights to use, copy, modify,
+ * merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to the following
+ * conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+ * PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+#pragma once
+#include "../ArduProfApp.h"
+
+// #if defined ARDUPROF_PICO_C
+// #include <hardware/gpio.h>
+// #endif
+
+class Led : public Gpio
+{
+public:
+#if defined ARDUINO_ARCH_RP2040 || defined ARDUINO_ARCH_MBED_RP2040
+    Led(uint8_t pin, uint8_t valueOn = LOW, PinMode mode = OUTPUT);
+#elif defined ARDUPROF_PICO_C
+    Led(uint8_t pin, uint8_t valueOn = LOW, bool output = GPIO_OUT);
+#elif defined ESP_PLATFORM
+    Led(gpio_num_t pin, uint32_t valueOn = LOW, gpio_mode_t mode = GPIO_MODE_OUTPUT);
+#endif
+
+    virtual void on(void);
+    virtual void off(void);
+    void toggle(void);
+
+protected:
+    const uint8_t valueOn;
+
+    uint8_t stateOnOff;
+};
