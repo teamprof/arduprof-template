@@ -18,43 +18,9 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 #pragma once
-#include <map>
 
-#include "../ArduProfApp.h"
-#include "../AppEvent.h"
+namespace chip {
 
-#undef CLASSNAME
-#define CLASSNAME QueueMain
+    void printInfo(void);
 
-
-class CLASSNAME final : public NAMESPACE::MessageBus
-{
-private:
-    CLASSNAME();
-
-public:
-    CLASSNAME(const CLASSNAME&) = delete;
-    CLASSNAME& operator=(const CLASSNAME&) = delete;
-
-    static CLASSNAME& getInstance(void);
-
-    virtual void start(void *);
-    virtual void onMessage(const Message &msg) override;
-
-    static void printChipInfo(void);
-
-protected:
-    typedef void (CLASSNAME::*funcPtr)(const Message &);
-    std::map<int16_t, funcPtr> _handlerMap;
-
-private:
-    NAMESPACE::PeriodicTimer _timer1Hz;
-
-    void handlerSoftwareTimer(TimerHandle_t xTimer);
-
-    ///////////////////////////////////////////////////////////////////////
-    // declare event handler
-    ///////////////////////////////////////////////////////////////////////
-    __EVENT_FUNC_DECLARATION(EventSystem)
-    __EVENT_FUNC_DECLARATION(EventNull) // void handlerEventNull(const Message &msg);
 };

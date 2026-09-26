@@ -22,10 +22,11 @@
 #include "./ThreadApp.h"
 #include "../AppContext.h"
 #include "../pins.h"
+#include "../util/os.h"
 // #include "../util/util.h"
 
 #define LOG_LOCAL_LEVEL ESP_LOG_VERBOSE
-#include "esp_log.h"
+#include "../AppLog.h"
 static const char *TAG = STR(CLASSNAME);
 
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -75,17 +76,14 @@ static StaticTask_t xTaskBuffer;
 ///////////////////////////////////////////////////////////////////////
 void CLASSNAME::start(void *ctx)
 {
-#if defined ARDUPROF_FREERTOS 
-#if defined ARDUINO_ARCH_RP2040
-    LOG_TRACE("core", get_core_num(), ", uxTaskPriorityGet(NULL)=", uxTaskPriorityGet(NULL));
-#elif defined ARDUINO_ARCH_ESP32
-    LOG_TRACE("on core ", xPortGetCoreID(), ", xPortGetFreeHeapSize()=", xPortGetFreeHeapSize());
-#elif defined ESP_PLATFORM
-    ESP_LOGV(TAG, "on core %d, xPortGetFreeHeapSize()=%u", xPortGetCoreID(), xPortGetFreeHeapSize());
-#endif
-#elif defined ARDUPROF_MBED
-    LOG_TRACE("Mbed OS thread started");
-#endif
+    auto core = os::getRunningCore();
+    auto prio = os::getPriority();
+    auto freeHeapSize = os::getFreeHeapSize();
+#if defined ARDUINO
+    LOG_TRACE("core", core, ", priority=", prio, ", free heap size=", freeHeapSize);
+#else
+    APP_LOGD(TAG, "core %d, priority=%d, free heap size=%lu", core, prio, freeHeapSize);
+#endif 
 
     ThreadBase::start(ctx);
 
@@ -133,6 +131,12 @@ void CLASSNAME::start(void *ctx)
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
+CLASSNAME& CLASSNAME::getInstance(void)
+{
+    static CLASSNAME instance; // Guaranteed thread-safe initialization in C++ 11+
+    return instance;
+}
+
 CLASSNAME::CLASSNAME() : 
 #if defined ARDUPROF_FREERTOS
                         ardufreertos::ThreadBase(TASK_QUEUE_SIZE, ucQueueStorageArea, &xStaticQueue),
@@ -164,17 +168,14 @@ CLASSNAME::CLASSNAME() :
 
 void CLASSNAME::setup(void)
 {
-#if defined ARDUPROF_FREERTOS 
-#if defined ARDUINO_ARCH_RP2040
-    LOG_TRACE("core", get_core_num(), ", uxTaskPriorityGet(NULL)=", uxTaskPriorityGet(NULL));
-#elif defined ARDUINO_ARCH_ESP32
-    LOG_TRACE("on core ", xPortGetCoreID(), ", xPortGetFreeHeapSize()=", xPortGetFreeHeapSize());
-#elif defined ESP_PLATFORM
-    ESP_LOGV(TAG, "on core %d, priority=%d, xPortGetFreeHeapSize()=%u", xPortGetCoreID(), (int)uxTaskPriorityGet(NULL), xPortGetFreeHeapSize());
-#endif
-#elif defined ARDUPROF_MBED
-    LOG_TRACE("Mbed OS thread started");
-#endif    
+    auto core = os::getRunningCore();
+    auto prio = os::getPriority();
+    auto freeHeapSize = os::getFreeHeapSize();
+#if defined ARDUINO
+    LOG_TRACE("core", core, ", priority=", prio, ", free heap size=", freeHeapSize);
+#else
+    APP_LOGD(TAG, "core %d, priority=%d, free heap size=%lu", core, prio, freeHeapSize);
+#endif 
 
     ThreadBase::setup();
 
@@ -199,7 +200,7 @@ void CLASSNAME::onMessage(const Message &msg)
     }
     else
     {
-        ESP_LOGW(TAG, "Unsupported event=%d, iParam=%d, uParam=%d, lParam=%lu", msg.event, msg.iParam, msg.uParam, msg.lParam);
+        APP_LOGW(TAG, "Unsupported event=%d, iParam=%d, uParam=%d, lParam=%lu", msg.event, msg.iParam, msg.uParam, msg.lParam);
     }
 }
 
@@ -213,7 +214,7 @@ __EVENT_FUNC_DEFINITION(CLASSNAME, EventApp, msg) // void CLASSNAME::handlerEven
         handlerButton(msg);
         break;
     default:
-        ESP_LOGW(TAG, "Unsupported src=%d, uParam=%u, lParam=%lu", src, msg.uParam, msg.lParam);
+        APP_LOGW(TAG, "Unsupported src=%d, uParam=%u, lParam=%lu", src, msg.uParam, msg.lParam);
         break;
     }
 }
@@ -258,7 +259,7 @@ __EVENT_FUNC_DEFINITION(CLASSNAME, EventSystem, msg) // void CLASSNAME::handlerE
         handlerSoftwareTimer((TimerHandle_t)(msg.lParam));
         break;
     default:
-        ESP_LOGW(TAG, "unsupported SystemTriggerSource=%d", src);
+        APP_LOGW(TAG, "unsupported SystemTriggerSource=%d", src);
         break;
     }
 }
@@ -266,7 +267,7 @@ __EVENT_FUNC_DEFINITION(CLASSNAME, EventSystem, msg) // void CLASSNAME::handlerE
 // define EventNull handler
 __EVENT_FUNC_DEFINITION(CLASSNAME, EventNull, msg) // void CLASSNAME::handlerEventNull(const Message &msg)
 {
-    ESP_LOGD(TAG, "EventNull(%d), iParam=%d, uParam=%u, lParam=%lu", msg.event, msg.iParam, msg.uParam, msg.lParam);
+    APP_LOGD(TAG, "EventNull(%d), iParam=%d, uParam=%u, lParam=%lu", msg.event, msg.iParam, msg.uParam, msg.lParam);
 }
 /////////////////////////////////////////////////////////////////////////////
 
@@ -274,40 +275,40 @@ void CLASSNAME::handlerButton(const Message &msg)
 {
     enum SystemTriggerSource event = static_cast<SystemTriggerSource>(msg.uParam);
     int16_t pin = (int16_t)(msg.lParam);
-    // ESP_LOGD(TAG, "AppButton: buttonEvent=%d, pin=%d", event, pin);
+    // APP_LOGD(TAG, "AppButton: buttonEvent=%d, pin=%d", event, pin);
 
     if (pin == PIN_BOOT)
     {
-        // ESP_LOGV(TAG, "PIN_BOOT: event=%d", event);
+        // APP_LOGV(TAG, "PIN_BOOT: event=%d", event);
 
         switch(event)
         {
         case SysButtonClick:
         {
-            ESP_LOGV(TAG, "PIN_BOOT: SysButtonClick");
+            APP_LOGV(TAG, "PIN_BOOT: SysButtonClick");
             break;
         }
 
         case SysButtonDoubleClick:
         {
-            ESP_LOGV(TAG, "PIN_BOOT: SysButtonDoubleClick");
+            APP_LOGV(TAG, "PIN_BOOT: SysButtonDoubleClick");
             break;
         }
 
         case SysButtonLongPress:
         {
-            ESP_LOGV(TAG, "PIN_BOOT: SysButtonLongPress");
+            APP_LOGV(TAG, "PIN_BOOT: SysButtonLongPress");
             break;
         }
         default:
-            ESP_LOGW(TAG, "PIN_BOOT: unsupported event=%d", event);
+            APP_LOGW(TAG, "PIN_BOOT: unsupported event=%d", event);
             break;
         }
     }
     else
     {
-        ESP_LOGW(TAG, "Unsupported event=%d, iParam=%d, uParam=%d, lParam=%lu", msg.event, msg.iParam, msg.uParam, msg.lParam);
-        // ESP_LOGW(TAG, "unsupported pin=%d", pin);
+        APP_LOGW(TAG, "Unsupported event=%d, iParam=%d, uParam=%d, lParam=%lu", msg.event, msg.iParam, msg.uParam, msg.lParam);
+        // APP_LOGW(TAG, "unsupported pin=%d", pin);
     }
 }
 
@@ -315,7 +316,7 @@ void CLASSNAME::handlerSoftwareTimer(TimerHandle_t xTimer)
 {
     if (xTimer == _timer1Hz.timer())
     {
-        ESP_LOGV(TAG, "_timer1Hz");
+        APP_LOGV(TAG, "_timer1Hz");
 #if defined LED_BUILTIN
         _ledBuildin.toggle();
 #endif
@@ -336,7 +337,7 @@ void CLASSNAME::handlerSoftwareTimer(TimerHandle_t xTimer)
     }
     else
     {
-        ESP_LOGW(TAG, "unsupported timer handle=%p", xTimer);
+        APP_LOGW(TAG, "unsupported timer handle=%p", xTimer);
     }
 }
 

@@ -36,11 +36,7 @@ public:
     CLASSNAME(const CLASSNAME&) = delete;
     CLASSNAME& operator=(const CLASSNAME&) = delete;
 
-    static CLASSNAME& getInstance() 
-    {
-        static CLASSNAME instance; // Guaranteed thread-safe initialization in C++ 11+
-        return instance;
-    }
+    static CLASSNAME& getInstance(void);
 
     virtual void start(void *);
     virtual void onMessage(const Message &msg);

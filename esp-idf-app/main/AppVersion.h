@@ -21,11 +21,12 @@
 #include <stdint.h>
 
 /*
+v0.2.0: refactor print chip info and ESP_LOGx
 v0.1.0: first release
 */
 
 #define MajorVer 0
-#define MinorVer 1
+#define MinorVer 2
 #define BuildVer 0
 
 class AppVersion

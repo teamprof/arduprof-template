@@ -1,6 +1,7 @@
 
 file(GLOB_RECURSE THREAD_SRCS "thread/*.cpp")
 file(GLOB_RECURSE PERIPHERAL_SRCS "peripheral/*.cpp")
+file(GLOB_RECURSE UTIL_SRCS "util/*.cpp")
 
 idf_component_register(
     SRCS 
@@ -8,6 +9,8 @@ idf_component_register(
         "AppContext.cpp"
         ${THREAD_SRCS} 
         ${PERIPHERAL_SRCS}
+        ${UTIL_SRCS}
+        
     INCLUDE_DIRS 
         "."
     PRIV_REQUIRES 

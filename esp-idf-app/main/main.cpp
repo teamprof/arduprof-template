@@ -1,3 +1,22 @@
+/* Copyright 2026 teamprof.net@gmail.com
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this
+ * software and associated documentation files (the "Software"), to deal in the Software
+ * without restriction, including without limitation the rights to use, copy, modify,
+ * merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to the following
+ * conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+ * PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
 
 // # UART0 as debug log port
 // CONFIG_ESP_CONSOLE_UART_DEFAULT=y
@@ -15,7 +34,8 @@
 
 #define LOG_LOCAL_LEVEL ESP_LOG_DEBUG
 // #define LOG_LOCAL_LEVEL ESP_LOG_VERBOSE
-#include "esp_log.h"
+#include "./AppLog.h"
+// #include "esp_log.h"
 static const char *TAG = "main";
 
 #include "./ArduProfApp.h"
@@ -34,23 +54,23 @@ static void initGlobalVar(void)
 
 static void startTasks(void)
 {
-    ESP_LOGV(TAG, "startTasks...");
+    APP_LOGV(TAG, "startTasks...");
 
     auto& ctx = getAppContext();
     if (ctx.queueMain) {
         static_cast<QueueMain *>(ctx.queueMain)->start(&ctx);
     } else {
-        ESP_LOGW(TAG, "ctx->queueMain is NULL");
+        APP_LOGW(TAG, "ctx->queueMain is NULL");
     }
     if (ctx.threadApp) {
         ctx.threadApp->start(&ctx);
     } else {
-        ESP_LOGW(TAG, "ctx.threadApp is NULL");
+        APP_LOGW(TAG, "ctx.threadApp is NULL");
     }
     if (ctx.threadButton) {
         ctx.threadButton->start(&ctx);
     } else {
-        ESP_LOGW(TAG, "ctx.threadButton is NULL");
+        APP_LOGW(TAG, "ctx.threadButton is NULL");
     }
 }
 
@@ -59,14 +79,14 @@ static void setup(void)
     esp_log_level_set("*", ESP_LOG_VERBOSE);
 
 #if defined(CONFIG_ESP_CONSOLE_UART_DEFAULT)    
-    ESP_LOGI(TAG, "debug port is Hardware UART0 (Default)");
+    APP_LOGI(TAG, "debug port is Hardware UART0 (Default)");
 #elif defined(CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG)
     vTaskDelay(pdMS_TO_TICKS(1000));
-    ESP_LOGI(TAG, "debug port is Internal USB Serial/JTAG Controller");
+    APP_LOGI(TAG, "debug port is Internal USB Serial/JTAG Controller");
     vTaskDelay(pdMS_TO_TICKS(1000));
 #elif defined(CONFIG_ESP_CONSOLE_USB_CDC)
     vTaskDelay(pdMS_TO_TICKS(1000));
-    ESP_LOGI(TAG, "debug port is USB CDC (Virtual COM via TinyUSB)");
+    APP_LOGI(TAG, "debug port is USB CDC (Virtual COM via TinyUSB)");
 #endif
 
     unused_pins::setup();
@@ -88,7 +108,7 @@ static void loop(void)
     vTaskDelay(pdMS_TO_TICKS(100));
 
     static uint32_t count = 0;
-    ESP_LOGI(TAG, "Count: %lu", count++);
+    APP_LOGI(TAG, "Count: %lu", count++);
     vTaskDelay(pdMS_TO_TICKS(1000));
 }
 
